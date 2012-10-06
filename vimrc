@@ -9,7 +9,6 @@ endif
 set nocompatible
 
 "activate pathogen
-runtime bundle/vim-pathogen/autoload/pathogen.vim
 call pathogen#infect()
 
 "allow backspacing over everything in insert mode
@@ -25,7 +24,7 @@ set number      "show line numbers
 
 "display tabs and trailing spaces
 ""set list
-set listchars=tab:▷⋅,trail:⋅,nbsp:⋅
+set listchars=eol:¬,tab:▷⋅,trail:⋅,nbsp:⋅,precedes:<,extends:>
 
 set incsearch   "find the next match as we type the search
 set hlsearch    "hilight searches by default
@@ -36,14 +35,15 @@ set linebreak   "wrap lines at convenient points
 if v:version >= 703
     "undo settings
     set undodir=~/.vim/undofiles
-    set undofile
+    ""set undofile
 
     set colorcolumn=+1 "mark the ideal max text width
 endif
 
 "default indent settings
-set shiftwidth=4
-set softtabstop=4
+set shiftwidth=2
+set softtabstop=2
+set tabstop=2
 "set expandtab
 set autoindent
 
@@ -84,7 +84,7 @@ set laststatus=2
 
 "nerdtree settings
 let g:NERDTreeMouseMode = 2
-let g:NERDTreeWinSize = 40
+let g:NERDTreeWinSize = 25
 
 "explorer mappings
 nnoremap <f1> :BufExplorer<cr>
@@ -162,7 +162,6 @@ if has("autocmd")
 
   " For all text files set 'textwidth' to 78 characters.
   autocmd FileType text setlocal textwidth=78
-  autocmd FileType php setlocal textwidth=78
 
   " When editing a file, always jump to the last known cursor position.
   " Don't do it when the position is invalid or when inside an event handler
@@ -203,7 +202,6 @@ set nolazyredraw "Don't redraw while executing macros
 "set magic "Set magic on, for regular expressions
 set showmatch "Show matching bracets when text indicator is over them
 
-set tabstop=4
 set si "Smart indet
 
 set encoding=utf-8
@@ -240,7 +238,7 @@ function! PhpCheckSyntax()
   make %
 endfunction
 
-autocmd BufWritePost *.php :call PhpCheckSyntax()
+""autocmd BufWritePost *.php :call PhpCheckSyntax()
 
 let c_space_errors = 1
 let java_space_errors = 1
@@ -257,3 +255,8 @@ function RemoveTrailingWhitespace()
 endfunction
 
 au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
+
+if &textwidth < 1
+  setlocal textwidth=78
+endif
+set pastetoggle=<F7>
