@@ -49,3 +49,15 @@
 [submodule "bundle/nerdcommenter"]
 	path = bundle/nerdcommenter
 	url = git://github.com/scrooloose/nerdcommenter.git
+[submodule "bundle/colors-solarized"]
+	path = bundle/colors-solarized
+	url = git://github.com/altercation/vim-colors-solarized.git
+[submodule "bundle/javacomplete"]
+	path = bundle/javacomplete
+	url = git://github.com/vim-scripts/javacomplete.git
+[submodule "bundle/grb256"]
+	path = bundle/grb256
+	url = git://github.com/cstrahan/grb256.git
+[submodule "bundle/refact"]
+	path = bundle/refact
+	url = git://github.com/vim-scripts/vim-refact.git

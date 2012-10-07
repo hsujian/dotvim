@@ -1,4 +1,6 @@
-
+" This is Dejian's .vimrc file
+" vim:set ts=2 sts=2 sw=2 expandtab:
+"
 " When started as "evim", evim.vim will already have done these settings.
 if v:progname =~? "evim"
   finish
@@ -21,6 +23,8 @@ set showcmd     "show incomplete cmds down the bottom
 set showmode    "show current mode down the bottom
 
 set number      "show line numbers
+set switchbuf=useopen
+set winwidth=79
 
 "display tabs and trailing spaces
 ""set list
@@ -28,9 +32,11 @@ set listchars=eol:¬,tab:▷⋅,trail:⋅,nbsp:⋅,precedes:<,extends:>
 
 set incsearch   "find the next match as we type the search
 set hlsearch    "hilight searches by default
+set ignorecase smartcase
 
 set wrap        "dont wrap lines
 set linebreak   "wrap lines at convenient points
+let mapleader=","
 
 if v:version >= 703
     "undo settings
@@ -68,14 +74,12 @@ filetype plugin on
 filetype indent on
 
 "turn on syntax highlighting
+syntax enable
 syntax on
 
 "some stuff to get the mouse going in term
 set mouse=a
 set ttymouse=xterm2
-
-"tell the term has 256 colors
-set t_Co=256
 
 "hide buffers when not displayed
 set hidden
@@ -146,14 +150,6 @@ autocmd BufReadPost fugitive://*
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
 
-
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if &t_Co > 2 || has("gui_running")
-  colorscheme desert
-  set guifont=Monospace\ 14
-endif
-
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
 
@@ -171,6 +167,29 @@ if has("autocmd")
     \   exe "normal g`\"" |
     \ endif
 
+  "for ruby, autoindent with two spaces, always expand tabs
+  autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber
+    \ set ai sw=2 sts=2 et
+  autocmd FileType python set sw=4 sts=4 et
+
+  autocmd! BufRead,BufNewFile *.sass setfiletype sass
+
+  autocmd BufRead *.mkd  set ai formatoptions=tcroqn2 comments=n:&gt;
+  autocmd BufRead *.markdown  set ai formatoptions=tcroqn2 comments=n:&gt;
+
+  " Indent p tags
+  autocmd FileType html,eruby
+    \ if g:html_indent_tags !~ '\\|p\>' |
+    \   let g:html_indent_tags .= '\|p\|li\|dt\|dd' |
+    \ endif
+
+  " Don't syntax highlight markdown because it's often wrong
+  autocmd! FileType mkd setlocal syn=off
+
+  " Leave the return key alone when in command line windows, since it's used
+  " to run commands there.
+  autocmd! CmdwinEnter * :unmap <cr>
+  autocmd! CmdwinLeave * :call MapCR()
   augroup END
 
 endif " has("autocmd")
@@ -211,7 +230,8 @@ set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936,big5,euc-jp,latin1
 set ruler " show the cursor position all the time
 
 " set cursorcolumn
-" set cursorline
+set cursorline
+set cmdheight=2
 
 " ctags
 let b:TypesFileRecurse = 1
@@ -242,7 +262,7 @@ endfunction
 
 let c_space_errors = 1
 let java_space_errors = 1
-autocmd BufWritePre *.{cpp,h,c,php,xml,java,coffee}
+autocmd BufWritePre vimrc,*.{cpp,h,c,php,xml,java,coffee}
   \ call RemoveTrailingWhitespace()
 function RemoveTrailingWhitespace()
   if &ft != "diff"
@@ -259,4 +279,29 @@ au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
 if &textwidth < 1
   setlocal textwidth=78
 endif
+
 set pastetoggle=<F7>
+
+"tell the term has 256 colors
+:set t_Co=256
+let g:solarized_termcolors=256
+call togglebg#map("<F5>")
+
+if has("gui_running")
+	set guifont=Monospace\ 14
+	set background=light
+  colorscheme solarized
+else
+	set background=light
+  colorscheme solarized
+	""set background=dark
+  ""colorscheme grb256
+endif
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ARROW KEYS ARE UNACCEPTABLE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""map <Left> <Nop>
+""map <Right> <Nop>
+""map <Up> <Nop>
+""map <Down> <Nop>
