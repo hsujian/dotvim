@@ -29,6 +29,7 @@ set winwidth=79
 "display tabs and trailing spaces
 ""set list
 set listchars=eol:¬,tab:▷⋅,trail:⋅,nbsp:⋅,precedes:<,extends:>
+hi SpecialKey ctermfg=7 ctermbg=1
 
 set incsearch   "find the next match as we type the search
 set hlsearch    "hilight searches by default
@@ -38,6 +39,8 @@ set wrap        "dont wrap lines
 set linebreak   "wrap lines at convenient points
 ""let mapleader=","
 set shell=/bin/sh
+set splitright
+set splitbelow
 
 if v:version >= 703
     "undo settings
@@ -95,6 +98,7 @@ let g:NERDTreeWinSize = 25
 nnoremap <f1> :BufExplorer<cr>
 nnoremap <f2> :NERDTreeToggle<cr>
 nnoremap <f3> :TagbarToggle<cr>
+nnoremap <F4> :GundoToggle<cr>
 
 "source project specific config files
 runtime! projects/**/*.vim
@@ -324,3 +328,6 @@ else
     let g:tagbar_autoclose = 1
     let g:tagbar_autofocus = 1
 endif
+
+hi CursorLine cterm=bold
+hi LineNr cterm=bold ctermfg=0 ctermbg=none
