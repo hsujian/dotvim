@@ -61,3 +61,12 @@
 [submodule "bundle/refact"]
 	path = bundle/refact
 	url = git://github.com/vim-scripts/vim-refact.git
+[submodule "bundle/Gundo"]
+	path = bundle/Gundo
+	url = git://github.com/vim-scripts/Gundo.git
+[submodule "bundle/syntastic"]
+	path = bundle/syntastic
+	url = git://github.com/scrooloose/syntastic.git
+[submodule "bundle/DrawIt"]
+	path = bundle/DrawIt
+	url = git://github.com/vim-scripts/DrawIt.git

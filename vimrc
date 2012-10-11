@@ -36,12 +36,13 @@ set ignorecase smartcase
 
 set wrap        "dont wrap lines
 set linebreak   "wrap lines at convenient points
-let mapleader=","
+""let mapleader=","
+set shell=/bin/sh
 
 if v:version >= 703
     "undo settings
     set undodir=~/.vim/undofiles
-    ""set undofile
+    set undofile
 
     set colorcolumn=+1 "mark the ideal max text width
 endif
@@ -158,6 +159,8 @@ if has("autocmd")
 
   " For all text files set 'textwidth' to 78 characters.
   autocmd FileType text setlocal textwidth=78
+
+  au FileChangedShell * Warn "File has been changed outside of Vim."
 
   " When editing a file, always jump to the last known cursor position.
   " Don't do it when the position is invalid or when inside an event handler
@@ -283,19 +286,17 @@ endif
 set pastetoggle=<F7>
 
 "tell the term has 256 colors
-:set t_Co=256
+set t_Co=256
 let g:solarized_termcolors=256
 call togglebg#map("<F5>")
 
-if has("gui_running")
+if &t_Co > 2 || has("gui_running")
 	set guifont=Monospace\ 14
 	set background=light
   colorscheme solarized
 else
-	set background=light
-  colorscheme solarized
-	""set background=dark
-  ""colorscheme grb256
+	set background=dark
+  colorscheme grb256
 endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -305,3 +306,21 @@ endif
 ""map <Right> <Nop>
 ""map <Up> <Nop>
 ""map <Down> <Nop>
+
+""" Tagbar plugin settings
+let g:tagbar_sort = 0
+let g:tagbar_compact = 1
+let g:tagbar_autoshowtag = 1
+let g:tagbar_width = 25
+let g:tagbar_iconchars = ['+', '-']
+
+" Auto-open tagbar only if not in diff mode and the term wide enough to also
+" fit an 80-column window (plus eight for line numbers and the fold column).
+if &columns > 118
+    if ! &diff
+        au VimEnter * nested :call tagbar#autoopen(1)
+    endif
+else
+    let g:tagbar_autoclose = 1
+    let g:tagbar_autofocus = 1
+endif
