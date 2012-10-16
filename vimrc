@@ -40,7 +40,7 @@ set linebreak   "wrap lines at convenient points
 ""let mapleader=","
 set shell=/bin/sh
 set splitright
-set splitbelow
+"set splitbelow
 
 if v:version >= 703
     "undo settings
@@ -109,7 +109,6 @@ let g:NERDTreeMouseMode = 2
 let g:NERDTreeWinSize = 25
 
 "explorer mappings
-nnoremap <f1> :BufExplorer<cr>
 nnoremap <f2> :NERDTreeToggle<cr>
 nnoremap <f3> :TagbarToggle<cr>
 nnoremap <F4> :GundoToggle<cr>
@@ -339,3 +338,15 @@ endif
 
 hi CursorLine cterm=bold
 hi LineNr cterm=bold ctermfg=0 ctermbg=none
+
+"minibufexpl
+let g:miniBufExplMapCTabSwitchBufs = 1
+let g:miniBufExplMapWindowNavArrows = 1
+let g:miniBufExplSortBy = "mru"
+hi MBEVisibleActive guifg=#A6DB29 guibg=fg
+hi MBEVisibleChangedActive guifg=#F1266F guibg=fg
+hi MBEVisibleChanged guifg=#F1266F guibg=fg
+hi MBEVisibleNormal guifg=#5DC2D6 guibg=fg
+hi MBEChanged guifg=#CD5907 guibg=fg
+hi MBENormal guifg=#808080 guibg=fg
+"minibufexpl end
