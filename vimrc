@@ -298,10 +298,10 @@ set pastetoggle=<F7>
 
 "tell the term has 256 colors
 set t_Co=256
-let g:solarized_termcolors=256
-call togglebg#map("<F5>")
 
 if &t_Co > 2 || has("gui_running")
+  let g:solarized_termcolors=256
+  call togglebg#map("<F5>")
 	set guifont=Monospace\ 14
 	set background=light
   colorscheme solarized
