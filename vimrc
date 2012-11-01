@@ -178,6 +178,7 @@ if has("autocmd")
   autocmd FileType text setlocal textwidth=78
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
+	au InsertLeave * write
 
   " When editing a file, always jump to the last known cursor position.
   " Don't do it when the position is invalid or when inside an event handler
@@ -189,8 +190,8 @@ if has("autocmd")
 
   "for ruby, autoindent with two spaces, always expand tabs
   autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber
-    \ set ai sw=2 sts=2 et
-  autocmd FileType python set sw=4 sts=4 et
+    \ set ai sw=2 sts=2 et tw=78
+  autocmd FileType python set sw=4 sts=4 et tw=78
 
   autocmd! BufRead,BufNewFile *.sass setfiletype sass
 
@@ -302,7 +303,7 @@ set t_Co=256
 if &t_Co > 2 || has("gui_running")
   let g:solarized_termcolors=256
   call togglebg#map("<F5>")
-	""set guifont=Monospace\ 14
+	set guifont=Monaco:h14
 	set background=light
   colorscheme solarized
 else
@@ -350,3 +351,6 @@ hi MBEVisibleNormal guifg=#5DC2D6 guibg=fg
 hi MBEChanged guifg=#CD5907 guibg=fg
 hi MBENormal guifg=#808080 guibg=fg
 "minibufexpl end
+let g:ConqueTerm_StartMessages=0
+let g:ConqueTerm_CloseOnEnd = 1
+let g:ConqueTerm_ReadUnfocused = 1
