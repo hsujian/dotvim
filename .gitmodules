@@ -85,3 +85,6 @@
 [submodule "bundle/AutoComplPop"]
 	path = bundle/AutoComplPop
 	url = git://github.com/vim-scripts/AutoComplPop.git
+[submodule "bundle/ruby_koans"]
+	path = bundle/ruby_koans
+	url = git@github.com:hsujian/ruby_koans.vim.git
