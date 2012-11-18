@@ -37,7 +37,6 @@ set ignorecase smartcase
 
 set wrap        "dont wrap lines
 set linebreak   "wrap lines at convenient points
-""let mapleader=","
 set shell=/bin/sh
 set splitright
 "set splitbelow
@@ -81,20 +80,6 @@ filetype indent on
 syntax enable
 syntax on
 
-autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-autocmd FileType java set omnifunc=javacomplete#Complete
-if has("autocmd") && exists("+omnifunc")
-  autocmd Filetype *
-        \ if &omnifunc == "" |
-        \   setlocal omnifunc=syntaxcomplete#Complete |
-        \ endif
-endif
-
 "some stuff to get the mouse going in term
 set mouse=a
 set ttymouse=xterm2
@@ -114,7 +99,7 @@ nnoremap <f3> :TagbarToggle<cr>
 nnoremap <F4> :GundoToggle<cr>
 
 "source project specific config files
-runtime! projects/**/*.vim
+""runtime! projects/**/*.vim
 
 "dont load csapprox if we no gui support - silences an annoying warning
 if !has("gui")
@@ -168,6 +153,14 @@ autocmd BufReadPost fugitive://*
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
 
+let g:autosave_on_focus_change=1
+function! Autosave()
+	if &modified && g:autosave_on_focus_change
+		write
+		echo "Autosaved file while you were absent" 
+	endif
+endfunction
+
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
 
@@ -178,7 +171,7 @@ if has("autocmd")
   autocmd FileType text setlocal textwidth=78
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
-	au InsertLeave * write
+	au InsertLeave * :call Autosave()
 
   " When editing a file, always jump to the last known cursor position.
   " Don't do it when the position is invalid or when inside an event handler
@@ -258,23 +251,6 @@ let b:TypesFileIncludeLocals = 1
 let g:SuperTabRetainCompletionType=2
 let g:SuperTabDefaultCompletionType="<C-X><C-O>"
 
-"======================================================
-"PHP语法检查
-"======================================================
-function! PhpCheckSyntax()
-  " Check php syntax
-  setlocal makeprg=\php\ -l\ -n\ -d\ html_errors=off\ %
-
-  " Set shellpipe
-  setlocal shellpipe=>
-
-  " Use error format for parsing PHP error output
-  setlocal errorformat=%m\ in\ %f\ on\ line\ %l
-  make %
-endfunction
-
-""autocmd BufWritePost *.php :call PhpCheckSyntax()
-
 let c_space_errors = 1
 let java_space_errors = 1
 autocmd BufWritePre vimrc,*.{cpp,h,c,php,xml,java,coffee}
@@ -302,7 +278,7 @@ set t_Co=256
 
 if &t_Co > 2 || has("gui_running")
   let g:solarized_termcolors=256
-  call togglebg#map("<F5>")
+  ""call togglebg#map("<F5>")
 	set guifont=Monaco:h14
 	set background=light
   colorscheme solarized
@@ -328,7 +304,7 @@ let g:tagbar_iconchars = ['+', '-']
 
 " Auto-open tagbar only if not in diff mode and the term wide enough to also
 " fit an 80-column window (plus eight for line numbers and the fold column).
-if &columns > 118
+if &columns > 250
     if ! &diff
         au VimEnter * nested :call tagbar#autoopen(1)
     endif
@@ -351,6 +327,7 @@ hi MBEVisibleNormal guifg=#5DC2D6 guibg=fg
 hi MBEChanged guifg=#CD5907 guibg=fg
 hi MBENormal guifg=#808080 guibg=fg
 "minibufexpl end
+
 let g:ConqueTerm_StartMessages=0
 let g:ConqueTerm_CloseOnEnd = 1
 let g:ConqueTerm_ReadUnfocused = 1
