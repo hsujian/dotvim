@@ -88,3 +88,6 @@
 [submodule "bundle/ruby_koans"]
 	path = bundle/ruby_koans
 	url = git@github.com:hsujian/ruby_koans.vim.git
+[submodule "bundle/jshint"]
+	path = bundle/jshint
+	url = git://github.com/walm/jshint.vim.git
