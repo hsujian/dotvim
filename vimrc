@@ -280,8 +280,10 @@ if &t_Co > 2 || has("gui_running")
   let g:solarized_termcolors=256
   ""call togglebg#map("<F5>")
 	set guifont=Monaco:h14
-	set background=light
-  colorscheme solarized
+	""set background=light
+	set background=dark
+	""colorscheme solarized
+  colorscheme grb256
 else
 	set background=dark
   colorscheme grb256
