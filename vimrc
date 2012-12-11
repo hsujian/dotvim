@@ -252,6 +252,8 @@ let g:SuperTabDefaultCompletionType="<C-X><C-O>"
 
 let c_space_errors = 1
 let java_space_errors = 1
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+
 autocmd BufWritePre vimrc,*.{cpp,h,c,php,xml,java,coffee}
   \ call RemoveTrailingWhitespace()
 function RemoveTrailingWhitespace()
