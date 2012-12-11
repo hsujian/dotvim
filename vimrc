@@ -157,7 +157,7 @@ let g:autosave_on_focus_change=1
 function! Autosave()
 	if &modified && g:autosave_on_focus_change
 		write
-		echo "Autosaved file while you were absent" 
+		echo "Autosaved file while you were absent"
 	endif
 endfunction
 
@@ -181,7 +181,6 @@ if has("autocmd")
     \   exe "normal g`\"" |
     \ endif
 
-  "for ruby, autoindent with two spaces, always expand tabs
   autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber
     \ set ai sw=2 sts=2 et tw=78
   autocmd FileType python set sw=4 sts=4 et tw=78
@@ -239,14 +238,14 @@ set ruler " show the cursor position all the time
 
 " set cursorcolumn
 set cursorline
-set cmdheight=2
+""set cmdheight=2
 
 " ctags
 let b:TypesFileRecurse = 1
 let b:TypesFileDoNotGenerateTags = 1
 let b:TypesFileIncludeLocals = 1
 "let b:TypesFileIncludeSynMatches =1
-"let b:TypesFileLanguages = ['c']]
+"let b:TypesFileLanguages = ['c']
 
 let g:SuperTabRetainCompletionType=2
 let g:SuperTabDefaultCompletionType="<C-X><C-O>"
@@ -313,8 +312,7 @@ else
     let g:tagbar_autofocus = 1
 endif
 
-hi CursorLine cterm=bold
-hi LineNr cterm=bold ctermfg=0 ctermbg=none
+hi CursorLine cterm=underline
 
 "minibufexpl
 let g:miniBufExplMapCTabSwitchBufs = 1
