@@ -258,11 +258,13 @@ autocmd BufWritePre vimrc,*.{cpp,h,c,php,xml,java,coffee}
   \ call RemoveTrailingWhitespace()
 function RemoveTrailingWhitespace()
   if &ft != "diff"
-    let b:curcol = col(".")
-    let b:curline = line(".")
+    let _s=@/
+    let c = col(".")
+    let l = line(".")
     silent! %s/\s\+$//
     silent! %s/\(\s*\n\)\+\%$//
-    call cursor(b:curline, b:curcol)
+    let @/=_s
+    call cursor(l, c)
   endif
 endfunction
 
