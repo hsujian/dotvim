@@ -318,21 +318,6 @@ endif
 
 hi CursorLine cterm=underline
 
-"minibufexpl
-if has("gui_running")
-	let loaded_minibufexplorer = 1
-else
-	let g:miniBufExplMapCTabSwitchBufs = 1
-	let g:miniBufExplMapWindowNavArrows = 1
-	hi MBEVisibleActive guifg=#A6DB29 guibg=fg
-	hi MBEVisibleChangedActive guifg=#F1266F guibg=fg
-	hi MBEVisibleChanged guifg=#F1266F guibg=fg
-	hi MBEVisibleNormal guifg=#5DC2D6 guibg=fg
-	hi MBEChanged guifg=#CD5907 guibg=fg
-	hi MBENormal guifg=#808080 guibg=fg
-endif
-"minibufexpl end
-
 let g:ConqueTerm_StartMessages=0
 let g:ConqueTerm_CloseOnEnd = 1
 let g:ConqueTerm_ReadUnfocused = 1
