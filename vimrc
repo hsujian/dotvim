@@ -24,7 +24,6 @@ set showmode    "show current mode down the bottom
 
 set number      "show line numbers
 set switchbuf=useopen
-set winwidth=79
 
 "display tabs and trailing spaces
 ""set list
@@ -193,13 +192,25 @@ if has("autocmd")
   " Don't syntax highlight markdown because it's often wrong
   autocmd! FileType mkd setlocal syn=off
 
-  " Leave the return key alone when in command line windows, since it's used
-  " to run commands there.
-  autocmd! CmdwinEnter * :unmap <cr>
-  autocmd! CmdwinLeave * :call MapCR()
   augroup END
 
 endif " has("autocmd")
+
+nnoremap <leader><leader> <c-^>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" MULTIPURPOSE TAB KEY
+" Indent if we're at the beginning of a line. Else, do completion.
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-p>"
+    endif
+endfunction
+inoremap <tab> <c-r>=InsertTabWrapper()<cr>
+inoremap <s-tab> <c-n>
 
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
@@ -224,7 +235,7 @@ endif
 
 set completeopt=longest,menu
 
-set nolazyredraw "Don't redraw while executing macros
+set lazyredraw "Don't redraw while executing macros
 "set magic "Set magic on, for regular expressions
 set showmatch "Show matching bracets when text indicator is over them
 
