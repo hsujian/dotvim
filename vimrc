@@ -152,11 +152,19 @@ autocmd BufReadPost fugitive://*
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
 
-let g:autosave_on_focus_change=1
+function! IsCoding()
+  let code_ft = [
+        \ 'c', 'cpp', 'java', 'sh',
+        \ 'rb', 'js', 'ruby', 'haml', 'html',
+        \ 'javascript', 'sass', 'yaml', 'vim', 'python',
+        \ 'css']
+  return index(code_ft, &ft) > -1
+endfunction
+
 function! Autosave()
-	if &modified && g:autosave_on_focus_change
+	if &modified && IsCoding()
 		write
-		echo "Autosaved file while you were absent"
+		echo "Autosaved"
 	endif
 endfunction
 
@@ -293,7 +301,7 @@ set t_Co=256
 if has("gui_running")
   let g:solarized_termcolors=256
   ""call togglebg#map("<F5>")
-	set guifont=Monaco:h14
+	set guifont=Monaco:h16
 	set background=light
 	colorscheme solarized
 else
