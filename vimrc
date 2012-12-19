@@ -152,19 +152,25 @@ autocmd BufReadPost fugitive://*
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
 
-function! IsCoding()
-  let code_ft = [
-        \ 'c', 'cpp', 'java', 'sh',
-        \ 'rb', 'js', 'ruby', 'haml', 'html',
-        \ 'javascript', 'sass', 'yaml', 'vim', 'python',
-        \ 'css']
-  return index(code_ft, &ft) > -1
-endfunction
+if !exists('g:code_ft')
+	let g:code_ft = {}
+	function! SetCodingFileType()
+		let l:code_fts = [
+					\'coffee', 'c', 'cpp', 'javascript', 
+					\'ruby', 'haml', 'html', 'sh', 
+					\'sass', 'yaml', 'python', 'css', 
+					\'java', 'vim'
+					\]
+		for key in code_fts
+			let g:code_ft[key] = 1
+		endfor
+	endfunction
+	call SetCodingFileType()
+endif
 
 function! Autosave()
-	if &modified && IsCoding()
+	if &modified && has_key(g:code_ft, &ft)
 		write
-		echo "Autosaved"
 	endif
 endfunction
 
@@ -287,7 +293,7 @@ function RemoveTrailingWhitespace()
   endif
 endfunction
 
-au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
+"au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
 
 if &textwidth < 1
   setlocal textwidth=78
