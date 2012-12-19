@@ -332,3 +332,9 @@ hi CursorLine cterm=underline
 let g:ConqueTerm_StartMessages=0
 let g:ConqueTerm_CloseOnEnd = 1
 let g:ConqueTerm_ReadUnfocused = 1
+
+" dos2unix
+function! Txt_dos2unix()
+  bufdo! set ff=unix|w
+endfunction
+" dos2unix end
