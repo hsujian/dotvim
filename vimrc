@@ -194,7 +194,7 @@ if has("autocmd")
     \   exe "normal g`\"" |
     \ endif
 
-  autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber
+  autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber,coffee
     \ set ai sw=2 sts=2 et tw=78
   autocmd FileType python set sw=4 sts=4 et tw=78
 
