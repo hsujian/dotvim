@@ -40,6 +40,9 @@ set shell=/bin/sh
 set splitright
 "set splitbelow
 
+if &tw < 1
+	set tw=78
+endif
 if v:version >= 703
     "undo settings
     set undodir=~/.vim/undofiles
@@ -156,10 +159,10 @@ if !exists('g:code_ft')
 	let g:code_ft = {}
 	function! SetCodingFileType()
 		let l:code_fts = [
-					\'coffee', 'c', 'cpp', 'javascript', 
-					\'ruby', 'haml', 'html', 'sh', 
-					\'sass', 'yaml', 'python', 'css', 
-					\'java', 'vim'
+					\'coffee', 'c', 'cpp', 'javascript',
+					\'ruby', 'haml', 'html', 'sh',
+					\'sass', 'yaml', 'python', 'css',
+					\'java', 'vim', 'php'
 					\]
 		for key in code_fts
 			let g:code_ft[key] = 1
@@ -195,16 +198,10 @@ if has("autocmd")
     \ endif
 
   autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber,coffee
-    \ set ai sw=2 sts=2 et tw=78
-  autocmd FileType python set sw=4 sts=4 et tw=78
+    \ set ai sw=2 sts=2 et
+  autocmd FileType python set sw=4 sts=4 et
 
   autocmd! BufRead,BufNewFile *.sass setfiletype sass
-
-  autocmd BufRead *.mkd  set ai formatoptions=tcroqn2 comments=n:&gt;
-  autocmd BufRead *.markdown  set ai formatoptions=tcroqn2 comments=n:&gt;
-
-  " Don't syntax highlight markdown because it's often wrong
-  autocmd! FileType mkd setlocal syn=off
 
   augroup END
 
@@ -263,7 +260,7 @@ set ruler " show the cursor position all the time
 
 " set cursorcolumn
 set cursorline
-""set cmdheight=2
+set cmdheight=2
 
 " ctags
 let b:TypesFileRecurse = 1
@@ -279,25 +276,25 @@ let c_space_errors = 1
 let java_space_errors = 1
 autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
 
-autocmd BufWritePre vimrc,*.{cpp,h,c,php,xml,java,coffee}
+autocmd BufWritePre vimrc,*.{cpp,h,c,php,xml,java,js}
   \ call RemoveTrailingWhitespace()
 function RemoveTrailingWhitespace()
-  if &ft != "diff"
-    let _s=@/
-    let c = col(".")
-    let l = line(".")
-    silent! %s/\s\+$//
-    silent! %s/\(\s*\n\)\+\%$//
-    let @/=_s
-    call cursor(l, c)
+  if &ft == "diff"
+    return
   endif
+  let _s=@/
+  let c = col(".")
+  let l = line(".")
+  silent! %s/\s\+$//
+  silent! %s/\(\s*\n\)\+\%$//
+  let @/=_s
+  call cursor(l, c)
 endfunction
 
-"au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
+highlight WhitespaceEOL ctermbg=red guibg=red
+match WhitespaceEOL /\s\+$/
 
-if &textwidth < 1
-  setlocal textwidth=78
-endif
+au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
 
 set pastetoggle=<F7>
 
@@ -305,13 +302,11 @@ set pastetoggle=<F7>
 set t_Co=256
 
 if has("gui_running")
-  let g:solarized_termcolors=256
-  ""call togglebg#map("<F5>")
+	let g:solarized_termcolors=256
+  call togglebg#map("<F5>")
 	set guifont=Monaco:h16
-	set background=light
 	colorscheme solarized
 else
-	set background=dark
   colorscheme grb256
 endif
 
