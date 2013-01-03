@@ -274,9 +274,8 @@ let g:SuperTabDefaultCompletionType="<C-X><C-O>"
 
 let c_space_errors = 1
 let java_space_errors = 1
-autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
 
-autocmd BufWritePre vimrc,*.{cpp,h,c,php,xml,java,js}
+autocmd BufWritePre vimrc,*.{cpp,h,c,php,xml,java,js,coffee}
   \ call RemoveTrailingWhitespace()
 function RemoveTrailingWhitespace()
   if &ft == "diff"
@@ -291,10 +290,8 @@ function RemoveTrailingWhitespace()
   call cursor(l, c)
 endfunction
 
-highlight WhitespaceEOL ctermbg=red guibg=red
-match WhitespaceEOL /\s\+$/
 
-au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
+""au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
 
 set pastetoggle=<F7>
 
@@ -309,6 +306,9 @@ if has("gui_running")
 else
   colorscheme grb256
 endif
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+highlight WhitespaceEOL ctermbg=red guibg=red
+match WhitespaceEOL /\s\+$/
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ARROW KEYS ARE UNACCEPTABLE
