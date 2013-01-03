@@ -91,3 +91,6 @@
 [submodule "bundle/tabbar"]
 	path = bundle/tabbar
 	url = git://github.com/vim-scripts/TabBar.git
+[submodule "bundle/jade"]
+	path = bundle/jade
+	url = git://github.com/digitaltoad/vim-jade.git
