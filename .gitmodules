@@ -7,9 +7,6 @@
 [submodule "bundle/ultisnips"]
 	path = bundle/ultisnips
 	url = https://github.com/SirVer/ultisnips
-[submodule "bundle/phpvim"]
-	path = bundle/phpvim
-	url = git://github.com/vim-scripts/phpvim.git
 [submodule "bundle/auto-pairs"]
 	path = bundle/auto-pairs
 	url = git://github.com/vim-scripts/Auto-Pairs.git
@@ -37,9 +34,6 @@
 [submodule "bundle/tagbar"]
 	path = bundle/tagbar
 	url = git://github.com/majutsushi/tagbar.git
-[submodule "bundle/phpunit"]
-	path = bundle/phpunit
-	url = git://github.com/vim-scripts/phpunit.git
 [submodule "bundle/supertab"]
 	path = bundle/supertab
 	url = git://github.com/ervandew/supertab.git
