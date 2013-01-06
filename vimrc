@@ -39,6 +39,7 @@ set linebreak   "wrap lines at convenient points
 set shell=/bin/sh
 set splitright
 "set splitbelow
+set autochdir
 
 if &tw < 1
 	set tw=78
@@ -160,8 +161,8 @@ if !exists('g:code_ft')
 	function! SetCodingFileType()
 		let l:code_fts = [
 					\'coffee', 'c', 'cpp', 'javascript',
-					\'ruby', 'haml', 'html', 'sh',
-					\'sass', 'yaml', 'python', 'css',
+					\'ruby', 'haml', 'jade',
+					\'sass', 'yaml', 'python',
 					\'java', 'vim', 'php'
 					\]
 		for key in code_fts
@@ -197,7 +198,7 @@ if has("autocmd")
     \   exe "normal g`\"" |
     \ endif
 
-  autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber,coffee
+  autocmd FileType ruby,haml,eruby,yaml,jade,javascript,sass,cucumber,coffee
     \ set ai sw=2 sts=2 et
   autocmd FileType python set sw=4 sts=4 et
 
@@ -299,6 +300,7 @@ set pastetoggle=<F7>
 set t_Co=256
 
 if has("gui_running")
+  set showtabline=0
 	let g:solarized_termcolors=256
   call togglebg#map("<F5>")
 	set guifont=Monaco:h16
