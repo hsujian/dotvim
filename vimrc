@@ -355,6 +355,11 @@ catch
 endtry
 
 if has("mac") || has("macunix")
+  autocmd VimEnter * tab all
+  autocmd BufAdd * exe 'tabe "' . expand( "<afile") .'"'
+
+  nnoremap <C-left> :tabprevious<CR>
+  nnoremap <C-right> :tabnext<CR>
   nnoremap <C-S-tab> :tabprevious<CR>
   nnoremap <C-tab>   :tabnext<CR>
   inoremap <C-S-tab> <Esc>:tabprevious<CR>i
