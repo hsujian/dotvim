@@ -23,7 +23,6 @@ set showcmd     "show incomplete cmds down the bottom
 set showmode    "show current mode down the bottom
 
 set number      "show line numbers
-set switchbuf=useopen
 
 "display tabs and trailing spaces
 ""set list
@@ -347,3 +346,28 @@ function! Txt_dos2unix()
   bufdo! set ff=unix|w
 endfunction
 " dos2unix end
+
+" Specify the behavior when switching between buffers 
+try
+  set switchbuf=useopen,usetab,newtab
+  set stal=2
+catch
+endtry
+
+if has("mac") || has("macunix")
+  nnoremap <C-S-tab> :tabprevious<CR>
+  nnoremap <C-tab>   :tabnext<CR>
+  inoremap <C-S-tab> <Esc>:tabprevious<CR>i
+  inoremap <C-tab>   <Esc>:tabnext<CR>i
+
+  nnoremap <D-1> 1gt
+  nnoremap <D-2> 2gt
+  nnoremap <D-3> 3gt
+  nnoremap <D-4> 4gt
+  nnoremap <D-5> 5gt
+  nnoremap <D-6> 6gt
+  nnoremap <D-7> 7gt
+  nnoremap <D-8> 8gt
+  nnoremap <D-9> 9gt
+  nnoremap <D-0> 10gt
+endif
