@@ -96,10 +96,10 @@ set laststatus=2
 let g:NERDTreeMouseMode = 2
 let g:NERDTreeWinSize = 25
 
-"explorer mappings
 nnoremap <f2> :NERDTreeToggle<cr>
 nnoremap <f3> :TagbarToggle<cr>
 nnoremap <F4> :GundoToggle<cr>
+set pastetoggle=<F7>
 
 "source project specific config files
 ""runtime! projects/**/*.vim
@@ -291,16 +291,12 @@ function RemoveTrailingWhitespace()
   call cursor(l, c)
 endfunction
 
-
 ""au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
-
-set pastetoggle=<F7>
 
 "tell the term has 256 colors
 set t_Co=256
 
 if has("gui_running")
-  set showtabline=0
 	let g:solarized_termcolors=256
   call togglebg#map("<F5>")
 	set guifont=Monaco:h16
@@ -339,6 +335,12 @@ else
 endif
 
 hi CursorLine cterm=underline
+
+let g:Tb_MaxSize = 2
+let g:Tb_TabWrap = 1
+if &diff
+  let Tb_loaded= 1
+endif
 
 " dos2unix
 function! Txt_dos2unix()
