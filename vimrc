@@ -300,14 +300,31 @@ try
 catch
 endtry
 
-if has("mac") || has("macunix")
+if has("gui_running")
   nnoremap <C-left> :tabprevious<CR>
   nnoremap <C-right> :tabnext<CR>
   nnoremap <C-S-tab> :tabprevious<CR>
   nnoremap <C-tab>   :tabnext<CR>
   inoremap <C-S-tab> <Esc>:tabprevious<CR>i
   inoremap <C-tab>   <Esc>:tabnext<CR>i
+else
+  no   <M-Left>       <Home>
+  no!  <M-Left>       <Home>
 
+  no   <M-Right>      <End>
+  no!  <M-Right>      <End>
+
+  no   <M-Up>         <C-Home>
+  ino  <M-Up>         <C-Home>
+
+  no   <M-Down>       <C-End>
+  ino  <M-Down>       <C-End>
+
+  imap <M-BS>         <C-w>
+  imap <D-BS>         <C-u>
+endif
+
+if has("mac") || has("macunix")
   nnoremap <D-1> 1gt
   nnoremap <D-2> 2gt
   nnoremap <D-3> 3gt
