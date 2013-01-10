@@ -6,38 +6,27 @@ if v:progname =~? "evim"
   finish
 endif
 
-"Use Vim settings, rather then Vi settings (much better!).
-"This must be first, because it changes other options as a side effect.
 set nocompatible
 
-"activate pathogen
 call pathogen#infect()
 
-"allow backspacing over everything in insert mode
 set backspace=indent,eol,start
-
-"store lots of :cmdline history
 set history=1000
-
 set showcmd     "show incomplete cmds down the bottom
 set showmode    "show current mode down the bottom
-
 set number      "show line numbers
 
 "display tabs and trailing spaces
 ""set list
 set listchars=eol:¬,tab:▷⋅,trail:⋅,nbsp:⋅,precedes:<,extends:>
-hi SpecialKey ctermfg=7 ctermbg=1
 
 set incsearch   "find the next match as we type the search
 set hlsearch    "hilight searches by default
 set ignorecase smartcase
-
 set wrap        "dont wrap lines
 set linebreak   "wrap lines at convenient points
 set shell=/bin/sh
-set splitright
-"set splitbelow
+""set splitright
 set autochdir
 
 if &tw < 1
@@ -74,21 +63,14 @@ set scrolloff=3
 set sidescrolloff=7
 set sidescroll=1
 
-"load ftplugins and indent files
 filetype plugin on
 filetype indent on
-
-"turn on syntax highlighting
 syntax enable
 syntax on
 
-"some stuff to get the mouse going in term
 set mouse=a
 set ttymouse=xterm2
-
-"hide buffers when not displayed
 set hidden
-
 set laststatus=2
 
 "nerdtree settings
@@ -99,9 +81,6 @@ nnoremap <f2> :NERDTreeToggle<cr>
 nnoremap <f3> :TagbarToggle<cr>
 nnoremap <F4> :GundoToggle<cr>
 set pastetoggle=<F7>
-
-"source project specific config files
-""runtime! projects/**/*.vim
 
 "dont load csapprox if we no gui support - silences an annoying warning
 if !has("gui")
@@ -183,25 +162,14 @@ if has("autocmd")
   augroup vimrcEx
   au!
 
-  " For all text files set 'textwidth' to 78 characters.
   autocmd FileType text setlocal textwidth=78
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
 	au InsertLeave * :call Autosave()
 
-  " When editing a file, always jump to the last known cursor position.
-  " Don't do it when the position is invalid or when inside an event handler
-  " (happens when dropping a file on gvim).
-  autocmd BufReadPost *
-    \ if line("'\"") > 0 && line("'\"") <= line("$") |
-    \   exe "normal g`\"" |
-    \ endif
-
   autocmd FileType ruby,haml,eruby,yaml,jade,javascript,sass,cucumber,coffee
     \ set ai sw=2 sts=2 et
   autocmd FileType python set sw=4 sts=4 et
-
-  autocmd! BufRead,BufNewFile *.sass setfiletype sass
 
   augroup END
 
@@ -258,7 +226,6 @@ set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936,big5,euc-jp,latin1
 
 set ruler " show the cursor position all the time
 
-" set cursorcolumn
 set cursorline
 set cmdheight=2
 
@@ -272,15 +239,14 @@ let b:TypesFileIncludeLocals = 1
 let g:SuperTabRetainCompletionType=2
 let g:SuperTabDefaultCompletionType="<C-X><C-O>"
 
-let c_space_errors = 1
-let java_space_errors = 1
-
-autocmd BufWritePre vimrc,*.{cpp,h,c,php,xml,java,js,coffee}
-  \ call RemoveTrailingWhitespace()
+autocmd BufWritePre * call RemoveTrailingWhitespace()
 function RemoveTrailingWhitespace()
-  if &ft == "diff"
+  if &diff
     return
   endif
+	if !has_key(g:code_ft, &ft)
+		return
+	endif
   let _s=@/
   let c = col(".")
   let l = line(".")
@@ -290,9 +256,6 @@ function RemoveTrailingWhitespace()
   call cursor(l, c)
 endfunction
 
-""au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
-
-"tell the term has 256 colors
 set t_Co=256
 
 if has("gui_running")
@@ -303,37 +266,21 @@ if has("gui_running")
 else
   colorscheme grb256
 endif
+
+hi SpecialKey ctermfg=7 ctermbg=1
+hi CursorLine cterm=underline
 autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
 highlight WhitespaceEOL ctermbg=red guibg=red
 match WhitespaceEOL /\s\+$/
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" ARROW KEYS ARE UNACCEPTABLE
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""map <Left> <Nop>
-""map <Right> <Nop>
-""map <Up> <Nop>
-""map <Down> <Nop>
-
-""" Tagbar plugin settings
+" Tagbar plugin settings
 let g:tagbar_sort = 0
 let g:tagbar_compact = 1
 let g:tagbar_autoshowtag = 1
 let g:tagbar_width = 25
 let g:tagbar_iconchars = ['+', '-']
-
-" Auto-open tagbar only if not in diff mode and the term wide enough to also
-" fit an 80-column window (plus eight for line numbers and the fold column).
-if &columns > 250
-    if ! &diff
-        au VimEnter * nested :call tagbar#autoopen(1)
-    endif
-else
-    let g:tagbar_autoclose = 1
-    let g:tagbar_autofocus = 1
-endif
-
-hi CursorLine cterm=underline
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
 
 let g:Tb_MaxSize = 2
 let g:Tb_TabWrap = 1
@@ -347,17 +294,13 @@ function! Txt_dos2unix()
 endfunction
 " dos2unix end
 
-" Specify the behavior when switching between buffers 
+" Specify the behavior when switching between buffers
 try
   set switchbuf=useopen,usetab,newtab
-  set stal=2
 catch
 endtry
 
 if has("mac") || has("macunix")
-  autocmd VimEnter * tab all
-  autocmd BufAdd * exe 'tabe "' . expand( "<afile") .'"'
-
   nnoremap <C-left> :tabprevious<CR>
   nnoremap <C-right> :tabnext<CR>
   nnoremap <C-S-tab> :tabprevious<CR>
