@@ -10,42 +10,26 @@ set nocompatible
 
 call pathogen#infect()
 
-set backspace=indent,eol,start
-set history=1000
-set showcmd     "show incomplete cmds down the bottom
 set showmode    "show current mode down the bottom
 set number      "show line numbers
 
-"display tabs and trailing spaces
-""set list
-set listchars=eol:¬,tab:▷⋅,trail:⋅,nbsp:⋅,precedes:<,extends:>
-
-set incsearch   "find the next match as we type the search
 set hlsearch    "hilight searches by default
-set ignorecase smartcase
+set ignorecase
 set wrap        "dont wrap lines
 set linebreak   "wrap lines at convenient points
 set shell=/bin/sh
-""set splitright
 set autochdir
 
 if &tw < 1
 	set tw=78
 endif
-if v:version >= 703
-    "undo settings
-    set undodir=~/.vim/undofiles
-    set undofile
-
-    set colorcolumn=+1 "mark the ideal max text width
-endif
+set colorcolumn=+1 "mark the ideal max text width
 
 "default indent settings
 set shiftwidth=2
 set softtabstop=2
 set tabstop=2
 "set expandtab
-set autoindent
 
 "folding settings
 set foldmethod=indent   "fold based on indent
@@ -53,25 +37,13 @@ set foldnestmax=3       "deepest fold is 3 levels
 set nofoldenable        "dont fold by default
 
 set wildmode=list:longest   "make cmdline tab completion similar to bash
-set wildmenu                "enable ctrl-n and ctrl-p to scroll thru matches
 set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
 
 set formatoptions-=o "dont continue comments when pushing o/O
 
-"vertical/horizontal scroll off settings
-set scrolloff=3
-set sidescrolloff=7
-set sidescroll=1
-
-filetype plugin on
-filetype indent on
-syntax enable
-syntax on
-
 set mouse=a
 set ttymouse=xterm2
 set hidden
-set laststatus=2
 
 "nerdtree settings
 let g:NERDTreeMouseMode = 2
@@ -86,16 +58,6 @@ set pastetoggle=<F7>
 if !has("gui")
     let g:CSApprox_loaded = 1
 endif
-
-"make <c-l> clear the highlight as well as redraw
-nnoremap <C-L> :nohls<CR><C-L>
-inoremap <C-L> <C-O>:nohls<CR>
-
-"map Q to something useful
-noremap Q gq
-
-"make Y consistent with C and D
-nnoremap Y y$
 
 "visual search mappings
 function! s:VSetSearch()
@@ -216,7 +178,6 @@ set completeopt=longest,menu
 
 set lazyredraw "Don't redraw while executing macros
 "set magic "Set magic on, for regular expressions
-set showmatch "Show matching bracets when text indicator is over them
 
 set si "Smart indet
 
@@ -224,7 +185,6 @@ set encoding=utf-8
 set fenc=utf-8
 set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936,big5,euc-jp,latin1
 
-set ruler " show the cursor position all the time
 
 set cursorline
 set cmdheight=2
