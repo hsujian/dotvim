@@ -88,3 +88,6 @@
 [submodule "bundle/tabbar"]
 	path = bundle/tabbar
 	url = git://github.com/hsujian/TabBar.git
+[submodule "bundle/sensible"]
+	path = bundle/sensible
+	url = git://github.com/tpope/vim-sensible.git
