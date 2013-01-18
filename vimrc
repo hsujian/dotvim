@@ -311,6 +311,11 @@ if has("gui_running")
   inoremap <C-S-tab> <Esc>:tabprevious<CR>i
   inoremap <C-tab>   <Esc>:tabnext<CR>i
 
+  nnoremap <C-h> :tabprevious<CR>
+  nnoremap <C-l>   :tabnext<CR>
+  inoremap <C-S-h> <Esc>:tabprevious<CR>i
+  inoremap <C-l>   <Esc>:tabnext<CR>i
+
   if has("mac") || has("macunix")
     nnoremap <D-1> 1gt
     nnoremap <D-2> 2gt
