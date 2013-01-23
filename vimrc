@@ -222,6 +222,7 @@ if has("gui_running")
 	let g:solarized_termcolors=256
   call togglebg#map("<F5>")
 	set guifont=Monaco:h16
+  set bg=light
 	colorscheme solarized
 else
   colorscheme grb256
@@ -255,10 +256,7 @@ endfunction
 " dos2unix end
 
 " Specify the behavior when switching between buffers
-try
-  set switchbuf=useopen,usetab,newtab
-catch
-endtry
+set switchbuf=useopen
 
 "map <Left> <Nop>
 "map <Right> <Nop>
@@ -273,7 +271,7 @@ if has("gui_running")
 
   nnoremap <C-h> :tabprevious<CR>
   nnoremap <C-l>   :tabnext<CR>
-  inoremap <C-S-h> <Esc>:tabprevious<CR>i
+  inoremap <C-h> <Esc>:tabprevious<CR>i
   inoremap <C-l>   <Esc>:tabnext<CR>i
 
   if has("mac") || has("macunix")
