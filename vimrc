@@ -217,22 +217,14 @@ function RemoveTrailingWhitespace()
 endfunction
 
 set t_Co=256
+let g:solarized_termcolors=256
 
 if has("gui_running")
-	let g:solarized_termcolors=256
   call togglebg#map("<F5>")
 	set guifont=Monaco:h16
-  set bg=light
-	colorscheme solarized
-else
-  colorscheme grb256
 endif
-
-hi SpecialKey ctermfg=7 ctermbg=1
-hi CursorLine cterm=underline
-autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
-highlight WhitespaceEOL ctermbg=red guibg=red
-match WhitespaceEOL /\s\+$/
+set bg=dark
+colorscheme solarized
 
 " Tagbar plugin settings
 let g:tagbar_sort = 0
