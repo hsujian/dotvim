@@ -6,6 +6,17 @@ if v:progname =~? "evim"
   finish
 endif
 
+" Vim. Live it. ------------------------------------------------------- {{{
+noremap <up> <nop>
+noremap <down> <nop>
+noremap <left> <nop>
+noremap <right> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+inoremap <up> <nop>
+" }}}
+
 set nocompatible
 
 call pathogen#infect()
@@ -248,11 +259,6 @@ endfunction
 
 " Specify the behavior when switching between buffers
 set switchbuf=useopen
-
-map <Left> <Nop>
-map <Right> <Nop>
-map <Up> <Nop>
-map <Down> <Nop>
 
 if has("gui_running")
   nnoremap <C-S-tab> :tabprevious<CR>
