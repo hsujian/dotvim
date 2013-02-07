@@ -249,10 +249,10 @@ endfunction
 " Specify the behavior when switching between buffers
 set switchbuf=useopen
 
-"map <Left> <Nop>
-"map <Right> <Nop>
-"map <Up> <Nop>
-"map <Down> <Nop>
+map <Left> <Nop>
+map <Right> <Nop>
+map <Up> <Nop>
+map <Down> <Nop>
 
 if has("gui_running")
   nnoremap <C-S-tab> :tabprevious<CR>
