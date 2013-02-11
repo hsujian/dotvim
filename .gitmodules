@@ -46,9 +46,6 @@
 [submodule "bundle/javacomplete"]
 	path = bundle/javacomplete
 	url = git://github.com/vim-scripts/javacomplete.git
-[submodule "bundle/grb256"]
-	path = bundle/grb256
-	url = git://github.com/cstrahan/grb256.git
 [submodule "bundle/refact"]
 	path = bundle/refact
 	url = git://github.com/vim-scripts/vim-refact.git
