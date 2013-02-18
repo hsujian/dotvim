@@ -286,3 +286,4 @@ if has("gui_running")
 endif
 
 let g:ctrlp_cmd = 'CtrlPMixed'
+set rtp+=/usr/local/opt/go/misc/vim
