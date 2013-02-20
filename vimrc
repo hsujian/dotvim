@@ -223,7 +223,6 @@ function RemoveTrailingWhitespace()
 endfunction
 
 set t_Co=256
-let g:solarized_termcolors=256
 
 if has("gui_running")
   call togglebg#map("<F5>")
@@ -267,7 +266,7 @@ if has("gui_running")
   inoremap <C-h> <Esc>:tabprevious<CR>i
   inoremap <C-l>   <Esc>:tabnext<CR>i
 
-  if has("mac") || has("macunix")
+  if has("gui_macvim")
     nnoremap <D-1> 1gt
     nnoremap <D-2> 2gt
     nnoremap <D-3> 3gt
