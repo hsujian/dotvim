@@ -88,3 +88,6 @@
 [submodule "bundle/vim-markdown"]
 	path = bundle/vim-markdown
 	url = git://github.com/tpope/vim-markdown.git
+[submodule "bundle/editorconfig"]
+	path = bundle/editorconfig
+	url = git://github.com/editorconfig/editorconfig-vim.git
