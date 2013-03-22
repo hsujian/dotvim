@@ -109,7 +109,7 @@ if !exists('g:code_ft')
 					\'coffee', 'c', 'cpp', 'javascript',
 					\'ruby', 'haml', 'jade',
 					\'sass', 'yaml', 'python',
-					\'java', 'vim', 'php'
+					\'java', 'vim', 'php', 'go'
 					\]
 		for key in code_fts
 			let g:code_ft[key] = 1
@@ -135,7 +135,7 @@ if has("autocmd")
   au FileChangedShell * Warn "File has been changed outside of Vim."
 	au InsertLeave * :call Autosave()
 
-  autocmd FileType ruby,haml,eruby,yaml,jade,javascript,sass,cucumber,coffee
+  autocmd FileType ruby,haml,eruby,yaml,jade,javascript,sass,cucumber,coffee,go
     \ set ai sw=2 sts=2 et
   autocmd FileType python set sw=4 sts=4 et
 
@@ -225,7 +225,7 @@ endfunction
 set t_Co=256
 
 if has("gui_running")
-  call togglebg#map("<F5>")
+  "call togglebg#map("<F5>")
 	set guifont=Monaco:h16
 endif
 set bg=dark
