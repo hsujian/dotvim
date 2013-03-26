@@ -135,9 +135,7 @@ if has("autocmd")
   au FileChangedShell * Warn "File has been changed outside of Vim."
 	au InsertLeave * :call Autosave()
 
-  autocmd FileType ruby,haml,eruby,yaml,jade,javascript,sass,cucumber,coffee,go
-    \ set ai sw=2 sts=2 et
-  autocmd FileType python set sw=4 sts=4 et
+  autocmd FileType python set sw=4 sts=4
 
   augroup END
 
@@ -258,13 +256,6 @@ set switchbuf=useopen
 if has("gui_running")
   nnoremap <C-S-tab> :tabprevious<CR>
   nnoremap <C-tab>   :tabnext<CR>
-  inoremap <C-S-tab> <Esc>:tabprevious<CR>i
-  inoremap <C-tab>   <Esc>:tabnext<CR>i
-
-  nnoremap <C-h> :tabprevious<CR>
-  nnoremap <C-l>   :tabnext<CR>
-  inoremap <C-h> <Esc>:tabprevious<CR>i
-  inoremap <C-l>   <Esc>:tabnext<CR>i
 
   if has("gui_macvim")
     nnoremap <D-1> 1gt
@@ -273,10 +264,6 @@ if has("gui_running")
     nnoremap <D-4> 4gt
     nnoremap <D-5> 5gt
     nnoremap <D-6> 6gt
-    nnoremap <D-7> 7gt
-    nnoremap <D-8> 8gt
-    nnoremap <D-9> 9gt
-    nnoremap <D-0> 10gt
   endif
 endif
 
