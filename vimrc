@@ -42,7 +42,7 @@ set tabstop=2
 set foldmethod=indent   "fold based on indent
 set nofoldenable        "dont fold by default
 
-set wildmode=list:longest   "make cmdline tab completion similar to bash
+set wildmode=list:longest,full   "make cmdline tab completion similar to bash
 set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
 
 set formatoptions-=o "dont continue comments when pushing o/O
@@ -130,11 +130,11 @@ if has("autocmd")
   augroup vimrcEx
   au!
 
-  autocmd FileType text setlocal textwidth=78
-
   au FileChangedShell * Warn "File has been changed outside of Vim."
 	au InsertLeave * :call Autosave()
 
+  autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee
+    \ set sw=2 sts=2 et
   autocmd FileType python set sw=4 sts=4
 
   augroup END
@@ -253,6 +253,8 @@ endfunction
 " Specify the behavior when switching between buffers
 set switchbuf=useopen
 
+nnoremap <S-tab> :bn<CR>
+
 if has("gui_running")
   nnoremap <C-S-tab> :tabprevious<CR>
   nnoremap <C-tab>   :tabnext<CR>
@@ -266,6 +268,10 @@ if has("gui_running")
     nnoremap <D-6> 6gt
   endif
 endif
-
-let g:ctrlp_cmd = 'CtrlPMixed'
+if has("gui_running")
+  let g:previous_tab = 1
+  autocmd TabLeave * let g:previous_tab = tabpagenr()
+  map <m-tab> :tabnext <c-r>=g:previous_tab<cr><cr>
+endif
+let g:ctrlp_cmd = 'CtrlPMRU'
 set rtp+=/usr/local/opt/go/misc/vim
