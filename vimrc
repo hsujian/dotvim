@@ -7,10 +7,14 @@ if v:progname =~? "evim"
 endif
 
 " Vim. Live it. ------------------------------------------------------- {{{
-noremap <up> <nop>
-noremap <down> <nop>
-noremap <left> <nop>
-noremap <right> <nop>
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
 " }}}
 
 set nocompatible
@@ -253,9 +257,8 @@ endfunction
 " Specify the behavior when switching between buffers
 set switchbuf=useopen
 
-nnoremap <S-tab> :bn<CR>
-
 if has("gui_running")
+
   nnoremap <C-S-tab> :tabprevious<CR>
   nnoremap <C-tab>   :tabnext<CR>
 
@@ -269,9 +272,22 @@ if has("gui_running")
   endif
 endif
 if has("gui_running")
+  let Tb_loaded= 1
   let g:previous_tab = 1
   autocmd TabLeave * let g:previous_tab = tabpagenr()
-  map <m-tab> :tabnext <c-r>=g:previous_tab<cr><cr>
+  noremap <F1> :tabnext <c-r>=g:previous_tab<cr><cr>
+  imap <F1> <C-o><F1>
+else
+  set wildchar=<Tab> wildmenu wildmode=full
+  set wildcharm=<C-Z>
+  nnoremap <F1> :b <C-Z>
+  imap <F1> <C-o><F1>
 endif
 let g:ctrlp_cmd = 'CtrlPMRU'
 set rtp+=/usr/local/opt/go/misc/vim
+
+noremap <expr> <Home> (col('.') == matchend(getline('.'), '^\s*')+1 ? '0' : '^')
+noremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$' : 'g_')
+vnoremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$h' : 'g_')
+imap <Home> <C-o><Home>
+imap <End> <C-o><End>
