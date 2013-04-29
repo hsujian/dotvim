@@ -248,11 +248,15 @@ if &diff
   let Tb_loaded= 1
 endif
 
-" dos2unix
-function! Txt_dos2unix()
-  bufdo! set ff=unix|w
+" tab or buf switch
+function! My_tb_switch()
+  if tabpagenr('$') > 1
+    exe "tabn" g:previous_tab
+  else
+    exe 'b#'
+  endif
 endfunction
-" dos2unix end
+" switch end
 
 " Specify the behavior when switching between buffers
 set switchbuf=useopen
@@ -261,21 +265,29 @@ if has("gui_running")
 
   nnoremap <C-S-tab> :tabprevious<CR>
   nnoremap <C-tab>   :tabnext<CR>
-
+  inoremap <ESC> <ESC>:set iminsert=0<CR>
   if has("gui_macvim")
     nnoremap <D-1> 1gt
+    imap <D-1> <C-o><D-1>
     nnoremap <D-2> 2gt
+    imap <D-2> <C-o><D-2>
     nnoremap <D-3> 3gt
+    imap <D-3> <C-o><D-3>
     nnoremap <D-4> 4gt
+    imap <D-4> <C-o><D-4>
     nnoremap <D-5> 5gt
-    nnoremap <D-6> 6gt
+    imap <D-5> <C-o><D-5>
+    set imactivatekey=D-space
+  else
+    set imactivatekey=C-space
   endif
 endif
 if has("gui_running")
   let Tb_loaded= 1
   let g:previous_tab = 1
   autocmd TabLeave * let g:previous_tab = tabpagenr()
-  noremap <F1> :tabnext <c-r>=g:previous_tab<cr><cr>
+  "noremap <F1> :tabnext <c-r>=g:previous_tab<cr><cr>
+  noremap <F1> :call My_tb_switch()<CR>
   imap <F1> <C-o><F1>
 else
   set wildchar=<Tab> wildmenu wildmode=full
