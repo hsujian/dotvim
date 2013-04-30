@@ -6,17 +6,6 @@ if v:progname =~? "evim"
   finish
 endif
 
-" Vim. Live it. ------------------------------------------------------- {{{
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-nnoremap <left> <nop>
-nnoremap <right> <nop>
-inoremap <up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
-inoremap <right> <nop>
-" }}}
-
 set nocompatible
 
 call pathogen#infect()
@@ -123,6 +112,7 @@ if !exists('g:code_ft')
 endif
 
 function! Autosave()
+  set iminsert=0
 	if &modified && has_key(g:code_ft, &ft)
 		write
 	endif
@@ -263,9 +253,8 @@ set switchbuf=useopen
 
 if has("gui_running")
 
-  nnoremap <C-S-tab> :tabprevious<CR>
-  nnoremap <C-tab>   :tabnext<CR>
-  inoremap <ESC> <ESC>:set iminsert=0<CR>
+  nnoremap <C-S-tab> gT
+  nnoremap <C-tab>   gt
   if has("gui_macvim")
     nnoremap <D-1> 1gt
     imap <D-1> <C-o><D-1>
@@ -297,9 +286,3 @@ else
 endif
 let g:ctrlp_cmd = 'CtrlPMRU'
 set rtp+=/usr/local/opt/go/misc/vim
-
-noremap <expr> <Home> (col('.') == matchend(getline('.'), '^\s*')+1 ? '0' : '^')
-noremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$' : 'g_')
-vnoremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$h' : 'g_')
-imap <Home> <C-o><Home>
-imap <End> <C-o><End>
