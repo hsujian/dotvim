@@ -112,7 +112,6 @@ if !exists('g:code_ft')
 endif
 
 function! Autosave()
-  set iminsert=0
 	if &modified && has_key(g:code_ft, &ft)
 		write
 	endif
@@ -125,7 +124,8 @@ if has("autocmd")
   au!
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
-	au InsertLeave * :call Autosave()
+	au FocusLost * :call Autosave()
+  au InsertLeave * set iminsert=0
 
   autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee
     \ set sw=2 sts=2 et
@@ -286,3 +286,8 @@ else
 endif
 let g:ctrlp_cmd = 'CtrlPMRU'
 set rtp+=/usr/local/opt/go/misc/vim
+
+nmap a= :Tabularize /=<cr>
+vmap a= :Tabularize /=<cr>
+nmap a: :Tabularize /:\zs<cr>
+vmap a: :Tabularize /:\zs<cr>
