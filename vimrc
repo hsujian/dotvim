@@ -17,7 +17,6 @@ set hlsearch    "hilight searches by default
 set ignorecase
 set wrap        "dont wrap lines
 set linebreak   "wrap lines at convenient points
-set shell=/bin/sh
 set autochdir
 
 if &tw < 1
@@ -73,12 +72,12 @@ vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 "dont do it when writing a commit log entry
 autocmd BufReadPost * call SetCursorPosition()
 function! SetCursorPosition()
-    if &filetype !~ 'svn\|commit\c'
-        if line("'\"") > 0 && line("'\"") <= line("$")
-            exe "normal! g`\""
-            normal! zz
-        endif
-    end
+  if &filetype !~ 'svn\|commit\c'
+    if line("'\"") > 0 && line("'\"") <= line("$")
+      exe "normal! g`\""
+      normal! zz
+    endif
+  end
 endfunction
 
 "spell check when writing commit logs
@@ -102,7 +101,7 @@ if !exists('g:code_ft')
 					\'coffee', 'c', 'cpp', 'javascript',
 					\'ruby', 'haml', 'jade',
 					\'sass', 'yaml', 'python',
-					\'java', 'vim', 'php', 'go'
+					\'java', 'vim', 'php', 'go', 'html'
 					\]
 		for key in code_fts
 			let g:code_ft[key] = 1
@@ -111,8 +110,14 @@ if !exists('g:code_ft')
 	call SetCodingFileType()
 endif
 
+function! AutoSaveAll()
+  let cur_tab = tabpagenr()
+  tabdo call Autosave()
+  exe "tabn" cur_tab
+endfunction
+
 function! Autosave()
-	if &modified && has_key(g:code_ft, &ft)
+	if &modified && &readonly==0 && has_key(g:code_ft, &ft) && (expand("%:r") > "")
 		write
 	endif
 endfunction
@@ -123,9 +128,13 @@ if has("autocmd")
   augroup vimrcEx
   au!
 
+  set iminsert=0
+  set imsearch=0
+  set imd
+  au InsertLeave,FocusGained * set imd imi=0
+
   au FileChangedShell * Warn "File has been changed outside of Vim."
-	au FocusLost * :call Autosave()
-  au InsertLeave * set iminsert=0
+	au FocusLost * call AutoSaveAll()
 
   autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee
     \ set sw=2 sts=2 et
@@ -141,12 +150,12 @@ nnoremap <leader><leader> <c-^>
 " Indent if we're at the beginning of a line. Else, do completion.
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
+  let col = col('.') - 1
+  if !col || getline('.')[col - 1] !~ '\k'
+    return "\<tab>"
+  else
+    return "\<c-p>"
+  endif
 endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <s-tab> <c-n>
@@ -175,7 +184,6 @@ endif
 set completeopt=longest,menu
 
 set lazyredraw "Don't redraw while executing macros
-"set magic "Set magic on, for regular expressions
 
 set si "Smart indet
 
@@ -214,10 +222,7 @@ function RemoveTrailingWhitespace()
   call cursor(l, c)
 endfunction
 
-set t_Co=256
-
 if has("gui_running")
-  "call togglebg#map("<F5>")
 	set guifont=Monaco:h16
 endif
 set bg=dark
@@ -252,6 +257,7 @@ endfunction
 set switchbuf=useopen
 
 if has("gui_running")
+  au FocusGained * set guitablabel=%M%N\ %t
 
   nnoremap <C-S-tab> gT
   nnoremap <C-tab>   gt
@@ -266,16 +272,12 @@ if has("gui_running")
     imap <D-4> <C-o><D-4>
     nnoremap <D-5> 5gt
     imap <D-5> <C-o><D-5>
-    set imactivatekey=D-space
-  else
-    set imactivatekey=C-space
   endif
 endif
 if has("gui_running")
   let Tb_loaded= 1
   let g:previous_tab = 1
   autocmd TabLeave * let g:previous_tab = tabpagenr()
-  "noremap <F1> :tabnext <c-r>=g:previous_tab<cr><cr>
   noremap <F1> :call My_tb_switch()<CR>
   imap <F1> <C-o><F1>
 else
@@ -286,8 +288,11 @@ else
 endif
 let g:ctrlp_cmd = 'CtrlPMRU'
 set rtp+=/usr/local/opt/go/misc/vim
+set sessionoptions-=help
+set sessionoptions-=options
+let g:session_autoload = 'yes'
 
-nmap a= :Tabularize /=<cr>
-vmap a= :Tabularize /=<cr>
-nmap a: :Tabularize /:\zs<cr>
-vmap a: :Tabularize /:\zs<cr>
+nmap <leader>a= :Tabularize /=<cr>
+vmap <leader>a= :Tabularize /=<cr>
+nmap <leader>a; :Tabularize /:\zs<cr>
+vmap <leader>a; :Tabularize /:\zs<cr>
