@@ -196,6 +196,7 @@ set cursorline
 set cmdheight=2
 
 " ctags
+set tags=./tags,../tags,tags
 let b:TypesFileRecurse = 1
 let b:TypesFileDoNotGenerateTags = 1
 let b:TypesFileIncludeLocals = 1
@@ -296,3 +297,6 @@ nmap <leader>a= :Tabularize /=<cr>
 vmap <leader>a= :Tabularize /=<cr>
 nmap <leader>a; :Tabularize /:\zs<cr>
 vmap <leader>a; :Tabularize /:\zs<cr>
+
+nmap <leader>gw :Gwrite<cr>
+nmap <leader>gc :Gcommit<cr>
