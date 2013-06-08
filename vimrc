@@ -138,7 +138,7 @@ if has("autocmd")
 
   autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee
     \ set sw=2 sts=2 et
-  autocmd FileType python set sw=4 sts=4
+  autocmd FileType python set et
 
   augroup END
 
@@ -196,7 +196,6 @@ set cursorline
 set cmdheight=2
 
 " ctags
-set tags=./tags,../tags,tags
 let b:TypesFileRecurse = 1
 let b:TypesFileDoNotGenerateTags = 1
 let b:TypesFileIncludeLocals = 1
@@ -226,7 +225,6 @@ endfunction
 if has("gui_running")
 	set guifont=Monaco:h16
 endif
-set bg=dark
 colorscheme solarized
 
 " Tagbar plugin settings
@@ -291,7 +289,7 @@ let g:ctrlp_cmd = 'CtrlPMRU'
 set rtp+=/usr/local/opt/go/misc/vim
 set sessionoptions-=help
 set sessionoptions-=options
-let g:session_autoload = 'yes'
+let g:session_autosave = 'no'
 
 nmap <leader>a= :Tabularize /=<cr>
 vmap <leader>a= :Tabularize /=<cr>
@@ -300,3 +298,4 @@ vmap <leader>a; :Tabularize /:\zs<cr>
 
 nmap <leader>gw :Gwrite<cr>
 nmap <leader>gc :Gcommit<cr>
+set list
