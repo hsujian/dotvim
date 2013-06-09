@@ -7,8 +7,7 @@ if v:progname =~? "evim"
 endif
 
 set nocompatible
-
-call pathogen#infect()
+let g:loaded_session = 1
 
 set showmode    "show current mode down the bottom
 set number      "show line numbers
@@ -83,17 +82,6 @@ endfunction
 "spell check when writing commit logs
 autocmd filetype svn,*commit* setlocal spell
 
-"http://vimcasts.org/episodes/fugitive-vim-browsing-the-git-object-database/
-"hacks from above (the url, not jesus) to delete fugitive buffers when we
-"leave them - otherwise the buffer list gets poluted
-"
-"add a mapping on .. to view parent tree
-autocmd BufReadPost fugitive://* set bufhidden=delete
-autocmd BufReadPost fugitive://*
-  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
-  \   nnoremap <buffer> .. :edit %:h<CR> |
-  \ endif
-
 if !exists('g:code_ft')
 	let g:code_ft = {}
 	function! SetCodingFileType()
@@ -165,20 +153,8 @@ inoremap <s-tab> <c-n>
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
   \ | wincmd p | diffthis
 
-if has("cscope") && filereadable("/usr/bin/cscope")
-   set csprg=/usr/bin/cscope
-   set csto=0
-   set cst
-   set nocsverb
+if has("cscope")
    set cscopequickfix=s-,c-,d-,i-,t-,e-
-   " add any database in current directory
-   if filereadable("cscope.out")
-      cs add cscope.out
-   " else add database pointed to by environment
-   elseif $CSCOPE_DB != ""
-      cs add $CSCOPE_DB
-   endif
-   set csverb
 endif
 
 set completeopt=longest,menu
@@ -225,7 +201,6 @@ endfunction
 if has("gui_running")
 	set guifont=Monaco:h16
 endif
-colorscheme solarized
 
 " Tagbar plugin settings
 let g:tagbar_sort = 0
@@ -285,17 +260,80 @@ else
   nnoremap <F1> :b <C-Z>
   imap <F1> <C-o><F1>
 endif
-let g:ctrlp_cmd = 'CtrlPMRU'
+
 set rtp+=/usr/local/opt/go/misc/vim
 set sessionoptions-=help
 set sessionoptions-=options
-let g:session_autosave = 'no'
 
+
+nmap <leader>gw :Gwrite<cr>
+nmap <leader>gc :Gcommit<cr>
+set list
+map <silent> <F11> :set invlist<CR>
+nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
+
+" Plugins " {{{
+filetype off
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+Bundle 'tpope/vim-sensible'
+Bundle 'tpope/vim-fugitive'
+autocmd BufReadPost fugitive://* set bufhidden=delete
+autocmd BufReadPost fugitive://*
+  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
+  \   nnoremap <buffer> .. :edit %:h<CR> |
+  \ endif
+
+Bundle 'tpope/vim-rails.git'
+Bundle 'tpope/vim-markdown'
+Bundle 'tpope/vim-haml'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-ragtag'
+
+Bundle 'pangloss/vim-javascript'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'digitaltoad/vim-jade'
+
+Bundle 'walm/jshint.vim'
+
+Bundle 'SirVer/ultisnips'
+Bundle 'scrooloose/nerdtree'
+Bundle 'majutsushi/tagbar'
+Bundle 'ervandew/supertab'
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'godlygeek/tabular'
 nmap <leader>a= :Tabularize /=<cr>
 vmap <leader>a= :Tabularize /=<cr>
 nmap <leader>a; :Tabularize /:\zs<cr>
 vmap <leader>a; :Tabularize /:\zs<cr>
 
-nmap <leader>gw :Gwrite<cr>
-nmap <leader>gc :Gcommit<cr>
-set list
+Bundle 'Lokaltog/vim-powerline'
+
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'editorconfig/editorconfig-vim'
+Bundle 'scrooloose/syntastic'
+
+Bundle 'kien/ctrlp.vim'
+let g:ctrlp_cmd = 'CtrlPMRU'
+let g:ctrlp_user_command = 'find %s -type f'
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(gz|so|jpg)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+
+Bundle 'Auto-Pairs'
+Bundle 'Gundo'
+Bundle 'AutoComplPop'
+Bundle 'javacomplete'
+
+Bundle 'hsujian/TabBar'
+Bundle 'hsujian/arrow.vim'
+
+filetype plugin indent on
+" " }}}
+
+colorscheme solarized

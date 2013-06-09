@@ -2,6 +2,7 @@
 *.apk
 *.ap_
 sessions/
+bundle/
 .netrwhist
 # files for the dex VM
 *.dex
