@@ -7,7 +7,6 @@ if v:progname =~? "evim"
 endif
 
 set nocompatible
-let g:loaded_session = 1
 
 set showmode    "show current mode down the bottom
 set number      "show line numbers
