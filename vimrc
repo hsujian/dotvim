@@ -8,52 +8,38 @@ endif
 
 set nocompatible
 
-set showmode    "show current mode down the bottom
-set number      "show line numbers
-
-set hlsearch    "hilight searches by default
+set showmode
+set number
+set hlsearch
 set ignorecase
-set wrap        "dont wrap lines
-set linebreak   "wrap lines at convenient points
+set wrap
+set linebreak
 set autochdir
 
-if &tw < 1
-	set tw=78
-endif
-set colorcolumn=+1 "mark the ideal max text width
-
-"default indent settings
 set shiftwidth=2
 set softtabstop=2
 set tabstop=2
 "set expandtab
-
-"folding settings
-set foldmethod=indent   "fold based on indent
-set nofoldenable        "dont fold by default
-
-set wildmode=list:longest,full   "make cmdline tab completion similar to bash
-set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
-
-set formatoptions-=o "dont continue comments when pushing o/O
-
+set foldmethod=indent
+set nofoldenable
+set formatoptions-=o
 set mouse=a
 set ttymouse=xterm2
 set hidden
-
-"nerdtree settings
-let g:NERDTreeMouseMode = 2
-let g:NERDTreeWinSize = 25
-
-nnoremap <f2> :NERDTreeToggle<cr>
-nnoremap <f3> :TagbarToggle<cr>
-nnoremap <F4> :GundoToggle<cr>
 set pastetoggle=<F7>
-
-"dont load csapprox if we no gui support - silences an annoying warning
-if !has("gui")
-    let g:CSApprox_loaded = 1
-endif
+set completeopt=longest,menu
+set lazyredraw
+set si
+set encoding=utf-8
+set fenc=utf-8
+set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936,big5,euc-jp,latin1
+set cursorline
+set cmdheight=2
+set rtp+=/usr/local/opt/go/misc/vim
+set sessionoptions-=help
+set sessionoptions-=options
+set list
+map <silent> <F11> :set invlist<CR>
 
 "visual search mappings
 function! s:VSetSearch()
@@ -64,7 +50,6 @@ function! s:VSetSearch()
 endfunction
 vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR>
 vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
-
 
 "jump to last cursor position when opening a file
 "dont do it when writing a commit log entry
@@ -123,7 +108,7 @@ if has("autocmd")
   au FileChangedShell * Warn "File has been changed outside of Vim."
 	au FocusLost * call AutoSaveAll()
 
-  autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee
+  autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee,php
     \ set sw=2 sts=2 et
   autocmd FileType python set et
 
@@ -132,53 +117,11 @@ if has("autocmd")
 endif " has("autocmd")
 
 nnoremap <leader><leader> <c-^>
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" MULTIPURPOSE TAB KEY
-" Indent if we're at the beginning of a line. Else, do completion.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! InsertTabWrapper()
-  let col = col('.') - 1
-  if !col || getline('.')[col - 1] !~ '\k'
-    return "\<tab>"
-  else
-    return "\<c-p>"
-  endif
-endfunction
-inoremap <tab> <c-r>=InsertTabWrapper()<cr>
-inoremap <s-tab> <c-n>
 
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
   \ | wincmd p | diffthis
-
-if has("cscope")
-   set cscopequickfix=s-,c-,d-,i-,t-,e-
-endif
-
-set completeopt=longest,menu
-
-set lazyredraw "Don't redraw while executing macros
-
-set si "Smart indet
-
-set encoding=utf-8
-set fenc=utf-8
-set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936,big5,euc-jp,latin1
-
-
-set cursorline
-set cmdheight=2
-
-" ctags
-let b:TypesFileRecurse = 1
-let b:TypesFileDoNotGenerateTags = 1
-let b:TypesFileIncludeLocals = 1
-"let b:TypesFileIncludeSynMatches =1
-"let b:TypesFileLanguages = ['c']
-
-let g:SuperTabRetainCompletionType=2
-let g:SuperTabDefaultCompletionType="<C-X><C-O>"
 
 autocmd BufWritePre * call RemoveTrailingWhitespace()
 function RemoveTrailingWhitespace()
@@ -199,21 +142,6 @@ endfunction
 
 if has("gui_running")
 	set guifont=Monaco:h16
-endif
-
-" Tagbar plugin settings
-let g:tagbar_sort = 0
-let g:tagbar_compact = 1
-let g:tagbar_autoshowtag = 1
-let g:tagbar_width = 25
-let g:tagbar_iconchars = ['+', '-']
-let g:tagbar_autoclose = 1
-let g:tagbar_autofocus = 1
-
-let g:Tb_MaxSize = 2
-let g:Tb_TabWrap = 1
-if &diff
-  let Tb_loaded= 1
 endif
 
 " tab or buf switch
@@ -260,23 +188,17 @@ else
   imap <F1> <C-o><F1>
 endif
 
-set rtp+=/usr/local/opt/go/misc/vim
-set sessionoptions-=help
-set sessionoptions-=options
-
-
-nmap <leader>gw :Gwrite<cr>
-nmap <leader>gc :Gcommit<cr>
-set list
-map <silent> <F11> :set invlist<CR>
 nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
 
 " Plugins " {{{
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
-
+Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-sensible'
+nmap <leader>gw :Gwrite<cr>
+nmap <leader>gc :Gcommit<cr>
+
 Bundle 'tpope/vim-fugitive'
 autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd BufReadPost fugitive://*
@@ -298,9 +220,23 @@ Bundle 'digitaltoad/vim-jade'
 Bundle 'walm/jshint.vim'
 
 Bundle 'SirVer/ultisnips'
+nnoremap <f2> :NERDTreeToggle<cr>
 Bundle 'scrooloose/nerdtree'
+
+" Tagbar plugin settings
+let g:tagbar_compact = 1
+let g:tagbar_autoshowtag = 1
+let g:tagbar_width = 25
+let g:tagbar_iconchars = ['+', '-']
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
+" ctags
+let b:TypesFileRecurse = 1
+let b:TypesFileDoNotGenerateTags = 1
+let b:TypesFileIncludeLocals = 1
+nnoremap <f3> :TagbarToggle<cr>
 Bundle 'majutsushi/tagbar'
-Bundle 'ervandew/supertab'
+
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'godlygeek/tabular'
 nmap <leader>a= :Tabularize /=<cr>
@@ -314,25 +250,38 @@ Bundle 'altercation/vim-colors-solarized'
 Bundle 'editorconfig/editorconfig-vim'
 Bundle 'scrooloose/syntastic'
 
-Bundle 'kien/ctrlp.vim'
 let g:ctrlp_cmd = 'CtrlPMRU'
-let g:ctrlp_user_command = 'find %s -type f'
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+set wildmode=list:longest,full
+set wildignore+=*.o,*.obj,*~,*/tmp/*,*.so,*.swp,*.zip,*.jpg,*.png,*.gif,*/images/*
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(gz|so|jpg)$',
-  \ 'link': 'some_bad_symbolic_links',
+  \ 'file': '\v\.(gz|so|jpg|png|gif)$'
   \ }
+Bundle 'kien/ctrlp.vim'
 
+Bundle 'Lokaltog/vim-easymotion'
+Bundle 'ZenCoding.vim'
+Bundle 'ShowTrailingWhitespace'
 Bundle 'Auto-Pairs'
-Bundle 'Gundo'
-Bundle 'AutoComplPop'
+Bundle 'sjl/gundo.vim'
+nnoremap <F4> :GundoToggle<cr>
+Bundle 'Valloric/YouCompleteMe'
 Bundle 'javacomplete'
 
-Bundle 'hsujian/TabBar'
-Bundle 'hsujian/arrow.vim'
+let g:Tb_MaxSize = 2
+let g:Tb_TabWrap = 1
+if &diff
+  let Tb_loaded= 1
+endif
+Bundle 'xudejian/TabBar'
+Bundle 'xudejian/arrow.vim'
 
 filetype plugin indent on
 " " }}}
 
 colorscheme solarized
+
+if &tw < 1
+	set tw=78
+endif
+set colorcolumn=+1
