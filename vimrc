@@ -71,7 +71,7 @@ if !exists('g:code_ft')
 	function! SetCodingFileType()
 		let l:code_fts = [
 					\'coffee', 'c', 'cpp', 'javascript',
-					\'ruby', 'haml', 'jade',
+					\'ruby', 'haml', 'jade', 'cucumber',
 					\'sass', 'yaml', 'python',
 					\'java', 'vim', 'php', 'go', 'html'
 					\]
@@ -220,8 +220,11 @@ Bundle 'digitaltoad/vim-jade'
 Bundle 'walm/jshint.vim'
 
 Bundle 'SirVer/ultisnips'
+
+if !has("gui_running")
 nnoremap <f2> :NERDTreeToggle<cr>
 Bundle 'scrooloose/nerdtree'
+endif
 
 " Tagbar plugin settings
 let g:tagbar_compact = 1
