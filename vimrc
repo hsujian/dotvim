@@ -268,7 +268,11 @@ Bundle 'ShowTrailingWhitespace'
 Bundle 'Auto-Pairs'
 Bundle 'sjl/gundo.vim'
 nnoremap <F4> :GundoToggle<cr>
+
+if v:version < 703 || !has('patch661')
+else
 Bundle 'Valloric/YouCompleteMe'
+endif
 Bundle 'javacomplete'
 
 let g:Tb_MaxSize = 2
@@ -282,6 +286,7 @@ Bundle 'xudejian/arrow.vim'
 filetype plugin indent on
 " " }}}
 
+set bg=dark
 colorscheme solarized
 
 if &tw < 1
