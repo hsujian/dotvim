@@ -72,7 +72,7 @@ if !exists('g:code_ft')
 		let l:code_fts = [
 					\'coffee', 'c', 'cpp', 'javascript',
 					\'ruby', 'haml', 'jade', 'cucumber',
-					\'sass', 'yaml', 'python',
+					\'sass', 'yaml', 'python', 'markdown',
 					\'java', 'vim', 'php', 'go', 'html'
 					\]
 		for key in code_fts
@@ -111,6 +111,7 @@ if has("autocmd")
   autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee,php
     \ set sw=2 sts=2 et
   autocmd FileType python set et
+  autocmd FileType html,markdown set et
 
   augroup END
 
@@ -123,7 +124,8 @@ nnoremap <leader><leader> <c-^>
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
   \ | wincmd p | diffthis
 
-autocmd BufWritePre * call RemoveTrailingWhitespace()
+nmap <leader>tw :call RemoveTrailingWhitespace()<cr>
+"autocmd BufWritePre * call RemoveTrailingWhitespace()
 function RemoveTrailingWhitespace()
   if &diff
     return
