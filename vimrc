@@ -104,6 +104,7 @@ if has("autocmd")
   set imsearch=0
   set imd
   au InsertLeave,FocusGained * set imd imi=0
+  au InsertEnter * set imd imi=0
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
 	au FocusLost * call AutoSaveAll()
