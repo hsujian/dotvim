@@ -110,9 +110,10 @@ if has("autocmd")
 	au FocusLost * call AutoSaveAll()
 
   autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee,php
-    \ set sw=2 sts=2 et
+    \ set et
   autocmd FileType python set et
-  autocmd FileType html,markdown set et
+  autocmd FileType html set et
+  autocmd FileType markdown set sw=4 sts=4 ts=4 et
 
   augroup END
 
@@ -126,14 +127,7 @@ command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
   \ | wincmd p | diffthis
 
 nmap <leader>tw :call RemoveTrailingWhitespace()<cr>
-"autocmd BufWritePre * call RemoveTrailingWhitespace()
 function RemoveTrailingWhitespace()
-  if &diff
-    return
-  endif
-	if !has_key(g:code_ft, &ft)
-		return
-	endif
   let _s=@/
   let c = col(".")
   let l = line(".")
@@ -272,10 +266,7 @@ Bundle 'Auto-Pairs'
 Bundle 'sjl/gundo.vim'
 nnoremap <F4> :GundoToggle<cr>
 
-if v:version < 703 || !has('patch661')
-else
 Bundle 'Valloric/YouCompleteMe'
-endif
 Bundle 'javacomplete'
 
 let g:Tb_MaxSize = 2
@@ -292,7 +283,5 @@ filetype plugin indent on
 set bg=dark
 colorscheme solarized
 
-if &tw < 1
-	set tw=78
-endif
+set tw=78
 set colorcolumn=+1
