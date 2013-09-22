@@ -13,6 +13,7 @@ set number
 set hlsearch
 set ignorecase
 set wrap
+set guioptions-=r
 set linebreak
 set autochdir
 
@@ -193,10 +194,13 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-sensible'
-nmap <leader>gw :Gwrite<cr>
-nmap <leader>gc :Gcommit<cr>
+
+nnoremap <f2> :NERDTreeToggle<cr>
+Bundle 'scrooloose/nerdtree'
 
 Bundle 'tpope/vim-fugitive'
+nmap <leader>gw :Gwrite<cr>
+nmap <leader>gc :Gcommit<cr>
 autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd BufReadPost fugitive://*
   \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
@@ -217,11 +221,6 @@ Bundle 'digitaltoad/vim-jade'
 Bundle 'walm/jshint.vim'
 
 Bundle 'SirVer/ultisnips'
-
-if !has("gui_running")
-nnoremap <f2> :NERDTreeToggle<cr>
-Bundle 'scrooloose/nerdtree'
-endif
 
 " Tagbar plugin settings
 let g:tagbar_compact = 1
@@ -264,6 +263,7 @@ Bundle 'ZenCoding.vim'
 Bundle 'ShowTrailingWhitespace'
 Bundle 'Auto-Pairs'
 Bundle 'sjl/gundo.vim'
+set undodir^=~/.vim/undo
 nnoremap <F4> :GundoToggle<cr>
 
 Bundle 'Valloric/YouCompleteMe'
@@ -280,7 +280,7 @@ Bundle 'xudejian/arrow.vim'
 filetype plugin indent on
 " " }}}
 
-set bg=dark
+set bg=light
 colorscheme solarized
 
 set tw=78

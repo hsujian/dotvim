@@ -3,6 +3,7 @@
 *.ap_
 sessions/
 bundle/
+undo/
 .netrwhist
 # files for the dex VM
 *.dex
