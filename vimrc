@@ -42,6 +42,13 @@ set sessionoptions-=options
 set list
 map <silent> <F11> :set invlist<CR>
 
+function! LoadCscope(git_dir)
+  if filereadable(a:git_dir . '/cscope.out')
+    execute 'cs add ' . a:git_dir . '/cscope.out ' . a:git_dir . '/../'
+  endif
+endf
+nmap <F5> :call LoadCscope(b:git_dir)<CR>
+
 "visual search mappings
 function! s:VSetSearch()
     let temp = @@
@@ -201,11 +208,18 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'tpope/vim-fugitive'
 nmap <leader>gw :Gwrite<cr>
 nmap <leader>gc :Gcommit<cr>
+augroup fugitive
+  autocmd!
+  autocmd BufNewFile,BufReadPost * 
+        \ if exists('b:git_dir') |
+        \  call s:JumpInit() |
+        \ endif
 autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd BufReadPost fugitive://*
   \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
+augroup END
 
 Bundle 'tpope/vim-rails.git'
 Bundle 'tpope/vim-markdown'
@@ -217,8 +231,6 @@ Bundle 'pangloss/vim-javascript'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'digitaltoad/vim-jade'
-
-Bundle 'walm/jshint.vim'
 
 Bundle 'SirVer/ultisnips'
 
