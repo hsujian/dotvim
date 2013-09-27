@@ -33,6 +33,13 @@ if has("cscope")
     " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
     set cscopetag
 
+    cnoreabbrev csa cs add
+    cnoreabbrev csf cs find
+    cnoreabbrev csk cs kill
+    cnoreabbrev csr cs reset
+    cnoreabbrev css cs show
+    cnoreabbrev csh cs help
+
     set cscopequickfix=s-,c-,d-,i-,t-,e-
     " check cscope for definition of a symbol before checking ctags: set to 1
     " if you want the reverse search order.
@@ -49,6 +56,18 @@ if has("cscope")
     " show msg when any other cscope db added
     set cscopeverbose
 
+    cnoreabbrev <expr> csa
+          \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs add'  : 'csa')
+    cnoreabbrev <expr> csf
+          \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs find' : 'csf')
+    cnoreabbrev <expr> csk
+          \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs kill' : 'csk')
+    cnoreabbrev <expr> csr
+          \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs reset' : 'csr')
+    cnoreabbrev <expr> css
+          \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs show' : 'css')
+    cnoreabbrev <expr> csh
+          \ ((getcmdtype() == ':' && getcmdpos() <= 4)? 'cs help' : 'csh')
 
     """"""""""""" My cscope/vim key mappings
     "
@@ -117,6 +136,16 @@ if has("cscope")
     nmap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
 
 
+    nmap <C-space>s :scs find s <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space>g :scs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space>c :scs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space>t :scs find t <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space>e :scs find e <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
+    nmap <C-space>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <C-space>d :scs find d <C-R>=expand("<cword>")<CR><CR>
+
+
     " Hitting CTRL-space *twice* before the search type does a vertical
     " split instead of a horizontal one (vim 6 and up only)
     "
@@ -131,6 +160,16 @@ if has("cscope")
     nmap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
     nmap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
     nmap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+
+
+    nmap <C-space><C-space>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space><C-space>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space><C-space>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space><C-space>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space><C-space>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+    nmap <C-space><C-space>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
+    nmap <C-space><C-space>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <C-space><C-space>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
 
 
     """"""""""""" key map timeouts
