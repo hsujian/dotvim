@@ -15,7 +15,6 @@ set ignorecase
 set wrap
 set guioptions-=r
 set linebreak
-set autochdir
 
 set shiftwidth=2
 set softtabstop=2
@@ -41,13 +40,36 @@ set sessionoptions-=help
 set sessionoptions-=options
 set list
 map <silent> <F11> :set invlist<CR>
+set mat=2
+try
+  set switchbuf=useopen,usetab,newtab
+  set stal=2
+catch
+endtry
+nnoremap <F3> :cn<cr>
+nnoremap <S-F3> :cp<cr>
+
+function! Grep(str)
+  let @/ = '\V\<' . escape(a:str, '\') . '\>'
+  exec "grep -srnw --binary-files=without-match --exclude-dir=.git --exclude='*.swp' . -e ".shellescape(a:str)
+  cwindow
+endfunction
+
+nnoremap <leader>f :noautocmd call Grep(expand('<cword>'))<bar>set hls<cr>
+vnoremap <leader>f y:noautocmd call Grep(@@)<bar>set hls<cr>
 
 function! LoadCscope(git_dir)
   if filereadable(a:git_dir . '/cscope.out')
     execute 'cs add ' . a:git_dir . '/cscope.out ' . a:git_dir . '/../'
   endif
 endf
-nmap <F5> :call LoadCscope(b:git_dir)<CR>
+
+function! Chdir2Project(git_dir)
+  let temp = fnamemodify(a:git_dir, ":s?/\.git.*??")
+  if isdirectory(temp)
+    exec 'lc ' temp
+  endif
+endf
 
 "visual search mappings
 function! s:VSetSearch()
@@ -159,9 +181,6 @@ function! My_tb_switch()
 endfunction
 " switch end
 
-" Specify the behavior when switching between buffers
-set switchbuf=useopen
-
 if has("gui_running")
   au FocusGained * set guitablabel=%M%N\ %t
 
@@ -206,6 +225,10 @@ nnoremap <f2> :NERDTreeToggle<cr>
 Bundle 'scrooloose/nerdtree'
 
 Bundle 'tpope/vim-fugitive'
+autocmd BufEnter * 
+        \ if exists('b:git_dir') |
+        \  call Chdir2Project(b:git_dir) |
+        \ endif
 nmap <leader>gw :Gwrite<cr>
 nmap <leader>gc :Gcommit<cr>
 augroup fugitive
@@ -213,6 +236,7 @@ augroup fugitive
   autocmd BufNewFile,BufReadPost * 
         \ if exists('b:git_dir') |
         \  call s:JumpInit() |
+        \  call LoadCscope(b:git_dir) |
         \ endif
 autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd BufReadPost fugitive://*
@@ -245,7 +269,6 @@ let g:tagbar_autofocus = 1
 let b:TypesFileRecurse = 1
 let b:TypesFileDoNotGenerateTags = 1
 let b:TypesFileIncludeLocals = 1
-nnoremap <f3> :TagbarToggle<cr>
 Bundle 'majutsushi/tagbar'
 
 Bundle 'scrooloose/nerdcommenter'
@@ -276,6 +299,7 @@ Bundle 'ShowTrailingWhitespace'
 Bundle 'Auto-Pairs'
 Bundle 'sjl/gundo.vim'
 set undodir^=~/.vim/undo
+set undofile
 nnoremap <F4> :GundoToggle<cr>
 
 Bundle 'Valloric/YouCompleteMe'
