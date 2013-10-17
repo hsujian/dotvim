@@ -50,13 +50,21 @@ nnoremap <F3> :cn<cr>
 nnoremap <S-F3> :cp<cr>
 
 function! Grep(str)
-  let @/ = '\V\<' . escape(a:str, '\') . '\>'
-  exec "grep -srnw --binary-files=without-match --exclude-dir=.git --exclude='*.swp' . -e ".shellescape(a:str)
+  let @/ = a:str
+  exe "grep -srn --binary-files=without-match --exclude-dir=.git --exclude='*.swp' . -e ".shellescape(a:str)
   cwindow
 endfunction
 
-nnoremap <leader>f :noautocmd call Grep(expand('<cword>'))<bar>set hls<cr>
-vnoremap <leader>f y:noautocmd call Grep(@@)<bar>set hls<cr>
+function! GrepWord(str)
+  let @/ = a:str
+  exe "grep -srnw --binary-files=without-match --exclude-dir=.git --exclude='*.swp' . -e ".shellescape(a:str)
+  cwindow
+endfunction
+
+nnoremap <leader>f :silent noautocmd call Grep(expand('<cword>'))<bar>set hls<cr>
+nnoremap <leader>fw :silent noautocmd call GrepWord(expand('<cword>'))<bar>set hls<cr>
+vnoremap <leader>f y:silent noautocmd call Grep(@@)<bar>set hls<cr>
+set autowriteall
 
 function! LoadCscope(git_dir)
   if filereadable(a:git_dir . '/cscope.out')
