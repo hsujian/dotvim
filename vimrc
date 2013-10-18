@@ -192,8 +192,6 @@ endfunction
 if has("gui_running")
   au FocusGained * set guitablabel=%M%N\ %t
 
-  nnoremap <C-S-tab> gT
-  nnoremap <C-tab>   gt
   if has("gui_macvim")
     nnoremap <D-1> 1gt
     imap <D-1> <C-o><D-1>
@@ -205,6 +203,16 @@ if has("gui_running")
     imap <D-4> <C-o><D-4>
     nnoremap <D-5> 5gt
     imap <D-5> <C-o><D-5>
+    nnoremap <D-6> 6gt
+    imap <D-6> <C-o><D-6>
+    nnoremap <D-7> 7gt
+    imap <D-7> <C-o><D-7>
+    nnoremap <D-8> 8gt
+    imap <D-8> <C-o><D-8>
+    nnoremap <D-9> 9gt
+    imap <D-9> <C-o><D-9>
+    nnoremap <D-0> 10gt
+    imap <D-0> <C-o><D-0>
   endif
 endif
 if has("gui_running")
@@ -320,6 +328,7 @@ if &diff
 endif
 Bundle 'xudejian/TabBar'
 Bundle 'xudejian/arrow.vim'
+Bundle 'terryma/vim-multiple-cursors'
 
 filetype plugin indent on
 " " }}}
