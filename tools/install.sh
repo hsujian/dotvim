@@ -27,3 +27,5 @@ echo "\033[0;34mInstall vim plugins \033[0m"
 vim +BundleInstall +qall
 
 echo "\n\n \033[0;32m....is now installed.\033[0m"
+
+echo "\n\n \033[0;32m you need make your vimproc \033[0m"

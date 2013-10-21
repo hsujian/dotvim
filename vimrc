@@ -10,6 +10,7 @@ set nocompatible
 
 set showmode
 set number
+set numberwidth=1
 set hlsearch
 set ignorecase
 set wrap
@@ -49,6 +50,10 @@ endtry
 nnoremap <F3> :cn<cr>
 nnoremap <S-F3> :cp<cr>
 
+augroup MyAutoCmd
+  autocmd!
+augroup END
+
 function! Grep(str)
   let @/ = a:str
   exe "grep -srn --binary-files=without-match --exclude-dir=.git --exclude='*.swp' . -e ".shellescape(a:str)
@@ -65,6 +70,28 @@ nnoremap <leader>f :silent noautocmd call Grep(expand('<cword>'))<bar>set hls<cr
 nnoremap <leader>fw :silent noautocmd call GrepWord(expand('<cword>'))<bar>set hls<cr>
 vnoremap <leader>f y:silent noautocmd call Grep(@@)<bar>set hls<cr>
 set autowriteall
+set wildmode=list:longest,full
+set wildignore=*.o,*.obj,*~
+set wildignore+=*DS_Store*
+set wildignore+=vendor/rails/**
+set wildignore+=vendor/cache/**
+set wildignore+=*.gem
+set wildignore+=log/**
+set wildignore+=tmp/**
+set wildignore+=*.png,*.jpg,*.gif
+set wildignore+=*.so,*.swp,*.zip,*/.Trash/**,*.pdf,*.dmg,*/Library/**,*/.rbenv/**
+set wildignore+=*/.nx/**,*.app
+set showbreak=↪
+"set iskeyword+=<,>,[,],:,-,`,!
+"set iskeyword-=_
+
+if exists('$TMUX')
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
 
 function! LoadCscope(git_dir)
   if filereadable(a:git_dir . '/cscope.out')
@@ -105,19 +132,19 @@ endfunction
 autocmd filetype svn,*commit* setlocal spell
 
 if !exists('g:code_ft')
-	let g:code_ft = {}
-	function! SetCodingFileType()
-		let l:code_fts = [
-					\'coffee', 'c', 'cpp', 'javascript',
-					\'ruby', 'haml', 'jade', 'cucumber',
-					\'sass', 'yaml', 'python', 'markdown',
-					\'java', 'vim', 'php', 'go', 'html'
-					\]
-		for key in code_fts
-			let g:code_ft[key] = 1
-		endfor
-	endfunction
-	call SetCodingFileType()
+  let g:code_ft = {}
+  function! SetCodingFileType()
+    let l:code_fts = [
+          \'coffee', 'c', 'cpp', 'javascript',
+          \'ruby', 'haml', 'jade', 'cucumber',
+          \'sass', 'yaml', 'python', 'markdown',
+          \'java', 'vim', 'php', 'go', 'html'
+          \]
+    for key in code_fts
+      let g:code_ft[key] = 1
+    endfor
+  endfunction
+  call SetCodingFileType()
 endif
 
 function! AutoSaveAll()
@@ -127,9 +154,9 @@ function! AutoSaveAll()
 endfunction
 
 function! Autosave()
-	if &modified && &readonly==0 && has_key(g:code_ft, &ft) && (expand("%:r") > "")
-		write
-	endif
+  if &modified && &readonly==0 && has_key(g:code_ft, &ft) && (expand("%:r") > "")
+    write
+  endif
 endfunction
 
 " Only do this part when compiled with support for autocommands.
@@ -145,7 +172,7 @@ if has("autocmd")
   au InsertEnter * set imd imi=0
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
-	au FocusLost * call AutoSaveAll()
+  au FocusLost * call AutoSaveAll()
 
   autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee,php
     \ set et
@@ -176,7 +203,7 @@ function RemoveTrailingWhitespace()
 endfunction
 
 if has("gui_running")
-	set guifont=Monaco:h16
+  set guifont=Monaco:h16
 endif
 
 " tab or buf switch
@@ -216,7 +243,6 @@ if has("gui_running")
   endif
 endif
 if has("gui_running")
-  let Tb_loaded= 1
   let g:previous_tab = 1
   autocmd TabLeave * let g:previous_tab = tabpagenr()
   noremap <F1> :call My_tb_switch()<CR>
@@ -237,7 +263,7 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-sensible'
 
-nnoremap <f2> :NERDTreeToggle<cr>
+nnoremap <leader><tab> :NERDTreeToggle<cr>
 Bundle 'scrooloose/nerdtree'
 
 Bundle 'tpope/vim-fugitive'
@@ -294,15 +320,11 @@ vmap <leader>a= :Tabularize /=<cr>
 nmap <leader>a; :Tabularize /:\zs<cr>
 vmap <leader>a; :Tabularize /:\zs<cr>
 
-Bundle 'Lokaltog/vim-powerline'
-
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'editorconfig/editorconfig-vim'
 Bundle 'scrooloose/syntastic'
 
 let g:ctrlp_cmd = 'CtrlPMRU'
-set wildmode=list:longest,full
-set wildignore+=*.o,*.obj,*~,*/tmp/*,*.so,*.swp,*.zip,*.jpg,*.png,*.gif,*/images/*
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)$',
   \ 'file': '\v\.(gz|so|jpg|png|gif)$'
@@ -316,25 +338,72 @@ Bundle 'Auto-Pairs'
 Bundle 'sjl/gundo.vim'
 set undodir^=~/.vim/undo
 set undofile
-nnoremap <F4> :GundoToggle<cr>
+nnoremap <leader>u :GundoToggle<cr>
 
 Bundle 'Valloric/YouCompleteMe'
 Bundle 'javacomplete'
 
-let g:Tb_MaxSize = 2
-let g:Tb_TabWrap = 1
-if &diff
-  let Tb_loaded= 1
-endif
-Bundle 'xudejian/TabBar'
 Bundle 'xudejian/arrow.vim'
 Bundle 'terryma/vim-multiple-cursors'
+Bundle 'airblade/vim-gitgutter'
+let g:gitgutter_realtime = 0
+let g:gitgutter_eager = 0
+Bundle 'Shougo/vimproc.vim'
+Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/unite-session'
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
+call unite#filters#sorter_default#use(['sorter_rank'])
+call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
+      \ 'ignore_pattern', join([
+      \ '\.git/',
+      \ 'tmp/',
+      \ '.sass-cache',
+      \ ], '\|'))
+nnoremap <leader><C-p> :Unite file_rec/async<cr>
+nnoremap <leader>ls :Unite -quick-match buffer<cr>
+let g:unite_source_history_yank_enable = 1
+nnoremap <leader>y :Unite history/yank<cr>
+nnoremap <leader>ss :<C-u>UniteSessionSave
+let g:unite_source_session_enable_auto_save = 1
+let g:unite_split_rule = "botright"
+let g:unite_source_file_mru_limit = 1000
+let g:unite_cursor_line_highlight = 'TabLineSel'
+autocmd VimEnter * call s:unite_session_on_enter()
+function! s:unite_session_on_enter()
+  if !argc() && !exists("g:start_session_from_cmdline")
+    Unite -buffer-name=sessions session
+  endif
+endfunction
 
+Bundle 'bling/vim-airline'
+"let g:airline_theme='dark'
 filetype plugin indent on
 " " }}}
 
-set bg=light
+"set bg=dark
 colorscheme solarized
+
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+augroup MyAutoCmd
+  autocmd BufWinEnter * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+$/ | endif
+  autocmd InsertEnter * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+\%#\@<!$/ | endif
+  autocmd InsertLeave * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+$/ | endif
+  autocmd BufWinLeave * if &modifiable && &ft!='unite' | call clearmatches() | endif
+augroup END
+
+if !has("gui_running")
+  hi clear SpellBad
+  hi SpellBad cterm=underline ctermfg=red
+  hi clear SpellCap
+  hi SpellCap cterm=underline ctermfg=blue
+  hi clear SpellLocal
+  hi SpellLocal cterm=underline ctermfg=blue
+  hi clear SpellRare
+  hi SpellRare cterm=underline ctermfg=blue
+endif
 
 set tw=78
 set colorcolumn=+1
+xmap <Tab> >
+xmap <s-tab> <
