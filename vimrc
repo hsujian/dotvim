@@ -42,6 +42,8 @@ set sessionoptions-=options
 set list
 map <silent> <F11> :set invlist<CR>
 set mat=2
+set splitright
+set splitbelow
 try
   set switchbuf=useopen,usetab,newtab
   set stal=2
@@ -81,9 +83,6 @@ set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
 set wildignore+=*.so,*.swp,*.zip,*/.Trash/**,*.pdf,*.dmg,*/Library/**,*/.rbenv/**
 set wildignore+=*/.nx/**,*.app
-set showbreak=↪
-"set iskeyword+=<,>,[,],:,-,`,!
-"set iskeyword-=_
 
 if exists('$TMUX')
   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
@@ -287,18 +286,16 @@ autocmd BufReadPost fugitive://*
   \ endif
 augroup END
 
-Bundle 'tpope/vim-rails.git'
 Bundle 'tpope/vim-markdown'
-Bundle 'tpope/vim-haml'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-ragtag'
 
+Bundle 'dart-lang/dart-vim-plugin'
 Bundle 'pangloss/vim-javascript'
 Bundle 'kchmck/vim-coffee-script'
+let coffee_watch_vert = 1
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'digitaltoad/vim-jade'
-
-Bundle 'SirVer/ultisnips'
 
 " Tagbar plugin settings
 let g:tagbar_compact = 1
@@ -324,16 +321,8 @@ Bundle 'altercation/vim-colors-solarized'
 Bundle 'editorconfig/editorconfig-vim'
 Bundle 'scrooloose/syntastic'
 
-let g:ctrlp_cmd = 'CtrlPMRU'
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(gz|so|jpg|png|gif)$'
-  \ }
-Bundle 'kien/ctrlp.vim'
-
 Bundle 'Lokaltog/vim-easymotion'
 Bundle 'ZenCoding.vim'
-Bundle 'ShowTrailingWhitespace'
 Bundle 'Auto-Pairs'
 Bundle 'sjl/gundo.vim'
 set undodir^=~/.vim/undo
@@ -341,7 +330,39 @@ set undofile
 nnoremap <leader>u :GundoToggle<cr>
 
 Bundle 'Valloric/YouCompleteMe'
-Bundle 'javacomplete'
+let g:ycm_confirm_extra_conf = 0
+augroup MyAutoCmd
+  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+  autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+  " autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
+augroup END
+
+Bundle 'SirVer/ultisnips'
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+" Make UltiSnips works nicely with YCM
+function! g:UltiSnips_Complete()
+    call UltiSnips_ExpandSnippet()
+    if g:ulti_expand_res == 0
+        if pumvisible()
+            return "\<C-n>"
+        else
+            call UltiSnips_JumpForwards()
+            if g:ulti_jump_forwards_res == 0
+               return "\<TAB>"
+            endif
+        endif
+    endif
+    return ""
+endfunction
+
+au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
 
 Bundle 'xudejian/arrow.vim'
 Bundle 'terryma/vim-multiple-cursors'
@@ -349,6 +370,7 @@ Bundle 'airblade/vim-gitgutter'
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
 Bundle 'Shougo/vimproc.vim'
+Bundle 'mileszs/ack.vim'
 Bundle 'Shougo/unite.vim'
 Bundle 'Shougo/unite-session'
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
@@ -356,35 +378,50 @@ call unite#filters#sorter_default#use(['sorter_rank'])
 call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
       \ 'ignore_pattern', join([
       \ '\.git/',
+      \ '\.hg/',
+      \ '\.svn/',
+      \ '\.gz',
+      \ '\.jpg',
+      \ '\.so',
+      \ '\.png',
+      \ '\.gif',
       \ 'tmp/',
       \ '.sass-cache',
       \ ], '\|'))
-nnoremap <leader><C-p> :Unite file_rec/async<cr>
-nnoremap <leader>ls :Unite -quick-match buffer<cr>
+nnoremap <C-p> :<C-u>Unite -buffer-name=files buffer file_mru bookmark file_rec/async<cr>
+nnoremap <leader>ls :<C-u>Unite -quick-match buffer<cr>
+nnoremap <leader>fg :<C-u>Unite -buffer-name=grep grep:.<CR>
 let g:unite_source_history_yank_enable = 1
-nnoremap <leader>y :Unite history/yank<cr>
+nnoremap <leader>y :<C-u>Unite history/yank<cr>
 nnoremap <leader>ss :<C-u>UniteSessionSave
+nnoremap <leader>sr :<C-u>Unite -buffer-name=sessions session
 let g:unite_source_session_enable_auto_save = 1
 let g:unite_split_rule = "botright"
 let g:unite_source_file_mru_limit = 1000
 let g:unite_cursor_line_highlight = 'TabLineSel'
-autocmd VimEnter * call s:unite_session_on_enter()
-function! s:unite_session_on_enter()
-  if !argc() && !exists("g:start_session_from_cmdline")
-    Unite -buffer-name=sessions session
-  endif
-endfunction
+
+if executable('ack-grep')
+  let g:unite_source_grep_command = 'ack-grep'
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a'
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack')
+  let g:unite_source_grep_command = 'ack'
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a'
+  let g:unite_source_grep_recursive_opt = ''
+endif
 
 Bundle 'bling/vim-airline'
 "let g:airline_theme='dark'
 filetype plugin indent on
 " " }}}
 
-"set bg=dark
-colorscheme solarized
+function! My_HiTrail()
+  highlight ExtraWhitespace ctermbg=red guibg=red
+  match ExtraWhitespace /\s\+$/
+endfunction
+autocmd! Syntax * call My_HiTrail()
+autocmd! ColorScheme * call My_HiTrail()
 
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
 augroup MyAutoCmd
   autocmd BufWinEnter * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+$/ | endif
   autocmd InsertEnter * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+\%#\@<!$/ | endif
@@ -392,16 +429,7 @@ augroup MyAutoCmd
   autocmd BufWinLeave * if &modifiable && &ft!='unite' | call clearmatches() | endif
 augroup END
 
-if !has("gui_running")
-  hi clear SpellBad
-  hi SpellBad cterm=underline ctermfg=red
-  hi clear SpellCap
-  hi SpellCap cterm=underline ctermfg=blue
-  hi clear SpellLocal
-  hi SpellLocal cterm=underline ctermfg=blue
-  hi clear SpellRare
-  hi SpellRare cterm=underline ctermfg=blue
-endif
+colorscheme solarized
 
 set tw=78
 set colorcolumn=+1

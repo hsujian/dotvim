@@ -21,10 +21,12 @@ echo "\033[0;34mUsing the dotvim vimrc file \033[0m"
 ln -s ~/.vim/vimrc ~/.vimrc
 
 echo "\033[0;34mInstall submodule \033[0m"
-cd .vim && git submodule update --init && cd ..
+cd ~/.vim && git submodule update --init --recursive && cd -
 
 echo "\033[0;34mInstall vim plugins \033[0m"
 vim +BundleInstall +qall
+
+cd ~/.vim/bundle/YouCompleteMe && ./install.sh --clang-completer && cd -
 
 echo "\n\n \033[0;32m....is now installed.\033[0m"
 
