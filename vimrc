@@ -20,7 +20,7 @@ set linebreak
 set shiftwidth=2
 set softtabstop=2
 set tabstop=2
-"set expandtab
+set expandtab
 set foldmethod=indent
 set nofoldenable
 set formatoptions-=o
@@ -68,6 +68,7 @@ function! GrepWord(str)
   cwindow
 endfunction
 
+nnoremap <leader>erc :tabe ~/.vimrc<cr>
 nnoremap <leader>f :silent noautocmd call Grep(expand('<cword>'))<bar>set hls<cr>
 nnoremap <leader>fw :silent noautocmd call GrepWord(expand('<cword>'))<bar>set hls<cr>
 vnoremap <leader>f y:silent noautocmd call Grep(@@)<bar>set hls<cr>
@@ -137,7 +138,7 @@ if !exists('g:code_ft')
           \'coffee', 'c', 'cpp', 'javascript',
           \'ruby', 'haml', 'jade', 'cucumber',
           \'sass', 'yaml', 'python', 'markdown',
-          \'java', 'vim', 'php', 'go', 'html'
+          \'java', 'vim', 'php', 'go', 'html', 'sh'
           \]
     for key in code_fts
       let g:code_ft[key] = 1
@@ -173,11 +174,7 @@ if has("autocmd")
   au FileChangedShell * Warn "File has been changed outside of Vim."
   au FocusLost * call AutoSaveAll()
 
-  autocmd FileType ruby,haml,jade,javascript,sass,cucumber,coffee,php
-    \ set et
-  autocmd FileType python set et
-  autocmd FileType html set et
-  autocmd FileType markdown set sw=4 sts=4 ts=4 et
+  autocmd FileType markdown set sw=4 sts=4 ts=4
 
   augroup END
 
@@ -262,6 +259,62 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-sensible'
 
+Bundle 'Shougo/vimproc.vim'
+Bundle 'mileszs/ack.vim'
+Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/unite-session'
+
+let g:unite_enable_start_insert = 1
+let g:unite_force_overwrite_statusline = 0
+let g:unite_winheight = 10
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
+call unite#filters#sorter_default#use(['sorter_rank'])
+call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
+      \ 'ignore_pattern', join([
+      \ '\.git/',
+      \ '\.hg/',
+      \ '\.svn/',
+      \ '\.gz',
+      \ '\.jpg',
+      \ '\.so',
+      \ '\.png',
+      \ '\.gif',
+      \ 'tmp/',
+      \ '.sass-cache',
+      \ ], '\|'))
+nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file_rec/async<cr>
+nnoremap <leader>ls :<C-u>Unite -quick-match buffer<cr>
+nnoremap <leader>fg :<C-u>Unite -buffer-name=grep grep:.<CR>
+let g:unite_source_history_yank_enable = 1
+nnoremap <leader>y :<C-u>Unite history/yank<cr>
+nnoremap <leader>ss :<C-u>UniteSessionSave
+nnoremap <leader>sr :<C-u>Unite -buffer-name=sessions session
+let g:unite_source_session_enable_auto_save = 1
+let g:unite_split_rule = "botright"
+let g:unite_source_file_mru_limit = 1000
+let g:unite_cursor_line_highlight = 'TabLineSel'
+
+autocmd FileType unite call s:unite_settings()
+function! s:unite_settings()
+  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
+  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
+  imap <silent><buffer><expr> <C-x> unite#do_action('split')
+  imap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+  imap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
+
+  nmap <buffer> <ESC> <Plug>(unite_exit)
+endfunction
+
+if executable('ack-grep')
+  let g:unite_source_grep_command = 'ack-grep'
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a --binary-files=without-match'
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack')
+  let g:unite_source_grep_command = 'ack'
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a --binary-files=without-match'
+  let g:unite_source_grep_recursive_opt = ''
+endif
+
 nnoremap <leader><tab> :NERDTreeToggle<cr>
 Bundle 'scrooloose/nerdtree'
 
@@ -286,29 +339,7 @@ autocmd BufReadPost fugitive://*
   \ endif
 augroup END
 
-Bundle 'tpope/vim-markdown'
 Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-ragtag'
-
-Bundle 'dart-lang/dart-vim-plugin'
-Bundle 'pangloss/vim-javascript'
-Bundle 'kchmck/vim-coffee-script'
-let coffee_watch_vert = 1
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'digitaltoad/vim-jade'
-
-" Tagbar plugin settings
-let g:tagbar_compact = 1
-let g:tagbar_autoshowtag = 1
-let g:tagbar_width = 25
-let g:tagbar_iconchars = ['+', '-']
-let g:tagbar_autoclose = 1
-let g:tagbar_autofocus = 1
-" ctags
-let b:TypesFileRecurse = 1
-let b:TypesFileDoNotGenerateTags = 1
-let b:TypesFileIncludeLocals = 1
-Bundle 'majutsushi/tagbar'
 
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'godlygeek/tabular'
@@ -322,15 +353,21 @@ Bundle 'editorconfig/editorconfig-vim'
 Bundle 'scrooloose/syntastic'
 
 Bundle 'Lokaltog/vim-easymotion'
-Bundle 'ZenCoding.vim'
 Bundle 'Auto-Pairs'
 Bundle 'sjl/gundo.vim'
 set undodir^=~/.vim/undo
 set undofile
 nnoremap <leader>u :GundoToggle<cr>
 
+if has('lua')
+let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#enable_smart_case = 1
+Bundle 'Shougo/neocomplete.vim'
+else
 Bundle 'Valloric/YouCompleteMe'
 let g:ycm_confirm_extra_conf = 0
+endif
+
 augroup MyAutoCmd
   autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
   autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
@@ -341,10 +378,10 @@ augroup MyAutoCmd
   " autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
 augroup END
 
-Bundle 'SirVer/ultisnips'
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+Bundle 'SirVer/ultisnips'
 
 " Make UltiSnips works nicely with YCM
 function! g:UltiSnips_Complete()
@@ -366,52 +403,24 @@ au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:U
 
 Bundle 'xudejian/arrow.vim'
 Bundle 'terryma/vim-multiple-cursors'
-Bundle 'airblade/vim-gitgutter'
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
-Bundle 'Shougo/vimproc.vim'
-Bundle 'mileszs/ack.vim'
-Bundle 'Shougo/unite.vim'
-Bundle 'Shougo/unite-session'
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#filters#sorter_default#use(['sorter_rank'])
-call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
-      \ 'ignore_pattern', join([
-      \ '\.git/',
-      \ '\.hg/',
-      \ '\.svn/',
-      \ '\.gz',
-      \ '\.jpg',
-      \ '\.so',
-      \ '\.png',
-      \ '\.gif',
-      \ 'tmp/',
-      \ '.sass-cache',
-      \ ], '\|'))
-nnoremap <C-p> :<C-u>Unite -buffer-name=files buffer file_mru bookmark file_rec/async<cr>
-nnoremap <leader>ls :<C-u>Unite -quick-match buffer<cr>
-nnoremap <leader>fg :<C-u>Unite -buffer-name=grep grep:.<CR>
-let g:unite_source_history_yank_enable = 1
-nnoremap <leader>y :<C-u>Unite history/yank<cr>
-nnoremap <leader>ss :<C-u>UniteSessionSave
-nnoremap <leader>sr :<C-u>Unite -buffer-name=sessions session
-let g:unite_source_session_enable_auto_save = 1
-let g:unite_split_rule = "botright"
-let g:unite_source_file_mru_limit = 1000
-let g:unite_cursor_line_highlight = 'TabLineSel'
+Bundle 'airblade/vim-gitgutter'
 
-if executable('ack-grep')
-  let g:unite_source_grep_command = 'ack-grep'
-  let g:unite_source_grep_default_opts = '--no-heading --no-color -a'
-  let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack')
-  let g:unite_source_grep_command = 'ack'
-  let g:unite_source_grep_default_opts = '--no-heading --no-color -a'
-  let g:unite_source_grep_recursive_opt = ''
-endif
+let g:user_emmet_install_global = 0
+Bundle 'mattn/emmet-vim'
+autocmd FileType html,css EmmetInstall
 
 Bundle 'bling/vim-airline'
-"let g:airline_theme='dark'
+
+Bundle 'tpope/vim-markdown'
+Bundle 'dart-lang/dart-vim-plugin'
+Bundle 'pangloss/vim-javascript'
+Bundle 'kchmck/vim-coffee-script'
+let coffee_watch_vert = 1
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'digitaltoad/vim-jade'
+
 filetype plugin indent on
 " " }}}
 
