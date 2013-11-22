@@ -68,7 +68,7 @@ function! GrepWord(str)
   cwindow
 endfunction
 
-nnoremap <leader>erc :tabe ~/.vimrc<cr>
+nnoremap <leader><F1> :tabe ~/.vim/vimrc<cr>
 nnoremap <leader>f :silent noautocmd call Grep(expand('<cword>'))<bar>set hls<cr>
 nnoremap <leader>fw :silent noautocmd call GrepWord(expand('<cword>'))<bar>set hls<cr>
 vnoremap <leader>f y:silent noautocmd call Grep(@@)<bar>set hls<cr>
@@ -131,34 +131,6 @@ endfunction
 "spell check when writing commit logs
 autocmd filetype svn,*commit* setlocal spell
 
-if !exists('g:code_ft')
-  let g:code_ft = {}
-  function! SetCodingFileType()
-    let l:code_fts = [
-          \'coffee', 'c', 'cpp', 'javascript',
-          \'ruby', 'haml', 'jade', 'cucumber',
-          \'sass', 'yaml', 'python', 'markdown',
-          \'java', 'vim', 'php', 'go', 'html', 'sh'
-          \]
-    for key in code_fts
-      let g:code_ft[key] = 1
-    endfor
-  endfunction
-  call SetCodingFileType()
-endif
-
-function! AutoSaveAll()
-  let cur_tab = tabpagenr()
-  tabdo call Autosave()
-  exe "tabn" cur_tab
-endfunction
-
-function! Autosave()
-  if &modified && &readonly==0 && has_key(g:code_ft, &ft) && (expand("%:r") > "")
-    write
-  endif
-endfunction
-
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
 
@@ -172,7 +144,7 @@ if has("autocmd")
   au InsertEnter * set imd imi=0
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
-  au FocusLost * call AutoSaveAll()
+  au FocusLost * silent! wa
 
   autocmd FileType markdown set sw=4 sts=4 ts=4
 
@@ -188,7 +160,7 @@ command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
   \ | wincmd p | diffthis
 
 nmap <leader>tw :call RemoveTrailingWhitespace()<cr>
-function RemoveTrailingWhitespace()
+function! RemoveTrailingWhitespace()
   let _s=@/
   let c = col(".")
   let l = line(".")
@@ -197,10 +169,6 @@ function RemoveTrailingWhitespace()
   let @/=_s
   call cursor(l, c)
 endfunction
-
-if has("gui_running")
-  set guifont=Monaco:h16
-endif
 
 " tab or buf switch
 function! My_tb_switch()
@@ -216,6 +184,7 @@ if has("gui_running")
   au FocusGained * set guitablabel=%M%N\ %t
 
   if has("gui_macvim")
+    set guifont=Monaco:h16
     nnoremap <D-1> 1gt
     imap <D-1> <C-o><D-1>
     nnoremap <D-2> 2gt
@@ -319,16 +288,12 @@ nnoremap <leader><tab> :NERDTreeToggle<cr>
 Bundle 'scrooloose/nerdtree'
 
 Bundle 'tpope/vim-fugitive'
-autocmd BufEnter * 
-        \ if exists('b:git_dir') |
-        \  call Chdir2Project(b:git_dir) |
-        \ endif
+autocmd BufEnter * if exists('b:git_dir') | call Chdir2Project(b:git_dir) | endif
 nmap <leader>gw :Gwrite<cr>
 nmap <leader>gc :Gcommit<cr>
 augroup fugitive
   autocmd!
-  autocmd BufNewFile,BufReadPost * 
-        \ if exists('b:git_dir') |
+  autocmd BufNewFile,BufReadPost * if exists('b:git_dir') |
         \  call s:JumpInit() |
         \  call LoadCscope(b:git_dir) |
         \ endif
