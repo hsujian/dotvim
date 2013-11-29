@@ -82,8 +82,7 @@ set wildignore+=*.gem
 set wildignore+=log/**
 set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
-set wildignore+=*.so,*.swp,*.zip,*/.Trash/**,*.pdf,*.dmg,*/Library/**,*/.rbenv/**
-set wildignore+=*/.nx/**,*.app
+set wildignore+=*.so,*.swp,*.zip,*/.Trash/**,*.pdf,*.dmg
 
 if exists('$TMUX')
   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
@@ -288,20 +287,34 @@ nnoremap <leader><tab> :NERDTreeToggle<cr>
 Bundle 'scrooloose/nerdtree'
 
 Bundle 'tpope/vim-fugitive'
-autocmd BufEnter * if exists('b:git_dir') | call Chdir2Project(b:git_dir) | endif
 nmap <leader>gw :Gwrite<cr>
 nmap <leader>gc :Gcommit<cr>
+
+function! Fugitive_settings()
+  set bufhidden=delete
+  if fugitive#buffer().type() =~# '^\%(tree\|blob\)$'
+    nnoremap <buffer> .. :edit %:h<cr>
+  endif
+endfunction
+
+function! Git_dir_settings()
+  if exists('b:git_dir')
+    call s:JumpInit()
+    call LoadCscope(b:git_dir)
+  endif
+endfunction
+
+function! Ch2git_root()
+  if exists('b:git_dir')
+    call Chdir2Project(b:git_dir)
+  endif
+endfunction
+
 augroup fugitive
   autocmd!
-  autocmd BufNewFile,BufReadPost * if exists('b:git_dir') |
-        \  call s:JumpInit() |
-        \  call LoadCscope(b:git_dir) |
-        \ endif
-autocmd BufReadPost fugitive://* set bufhidden=delete
-autocmd BufReadPost fugitive://*
-  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
-  \   nnoremap <buffer> .. :edit %:h<CR> |
-  \ endif
+  autocmd BufNewFile,BufReadPost * call Git_dir_settings()
+  autocmd BufReadPost fugitive://* call Fugitive_settings()
+  autocmd BufEnter * call Ch2git_root()
 augroup END
 
 Bundle 'tpope/vim-surround'
@@ -318,7 +331,7 @@ Bundle 'editorconfig/editorconfig-vim'
 Bundle 'scrooloose/syntastic'
 
 Bundle 'Lokaltog/vim-easymotion'
-Bundle 'Auto-Pairs'
+Bundle 'jiangmiao/auto-pairs'
 Bundle 'sjl/gundo.vim'
 set undodir^=~/.vim/undo
 set undofile
@@ -328,9 +341,6 @@ if has('lua')
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 Bundle 'Shougo/neocomplete.vim'
-else
-Bundle 'Valloric/YouCompleteMe'
-let g:ycm_confirm_extra_conf = 0
 endif
 
 augroup MyAutoCmd
