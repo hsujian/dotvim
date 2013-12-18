@@ -331,7 +331,6 @@ Bundle 'editorconfig/editorconfig-vim'
 Bundle 'scrooloose/syntastic'
 
 Bundle 'Lokaltog/vim-easymotion'
-Bundle 'jiangmiao/auto-pairs'
 Bundle 'sjl/gundo.vim'
 set undodir^=~/.vim/undo
 set undofile
@@ -353,29 +352,7 @@ augroup MyAutoCmd
   " autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
 augroup END
 
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 Bundle 'SirVer/ultisnips'
-
-" Make UltiSnips works nicely with YCM
-function! g:UltiSnips_Complete()
-    call UltiSnips_ExpandSnippet()
-    if g:ulti_expand_res == 0
-        if pumvisible()
-            return "\<C-n>"
-        else
-            call UltiSnips_JumpForwards()
-            if g:ulti_jump_forwards_res == 0
-               return "\<TAB>"
-            endif
-        endif
-    endif
-    return ""
-endfunction
-
-au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-
 Bundle 'xudejian/arrow.vim'
 Bundle 'terryma/vim-multiple-cursors'
 let g:gitgutter_realtime = 0
@@ -395,6 +372,9 @@ Bundle 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'digitaltoad/vim-jade'
+
+let g:AutoPairsShortcutFastWrap = '<C-S-m>'
+Bundle 'jiangmiao/auto-pairs'
 
 filetype plugin indent on
 " " }}}

@@ -17,9 +17,6 @@ then
   mv ~/.vimrc ~/.vimrc.pre-dotvim;
 fi
 
-echo "\033[0;34mUsing the dotvim vimrc file \033[0m"
-ln -s ~/.vim/vimrc ~/.vimrc
-
 echo "\033[0;34mInstall submodule \033[0m"
 cd ~/.vim && git submodule update --init --recursive && cd -
 
