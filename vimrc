@@ -283,17 +283,11 @@ Bundle 'tpope/vim-fugitive'
 nmap <leader>gw :Gwrite<cr>
 nmap <leader>gc :Gcommit<cr>
 
-function! Fugitive_settings()
-  set bufhidden=delete
-  if fugitive#buffer().type() =~# '^\%(tree\|blob\)$'
-    nnoremap <buffer> .. :edit %:h<cr>
-  endif
-endfunction
-
-augroup fugitive
-  autocmd!
-  autocmd BufReadPost fugitive://* call Fugitive_settings()
-augroup END
+autocmd BufReadPost fugitive://* set bufhidden=delete
+autocmd User fugitive
+  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
+  \   nnoremap <buffer> .. :edit %:h<CR> |
+  \ endif
 
 Bundle 'tpope/vim-surround'
 
