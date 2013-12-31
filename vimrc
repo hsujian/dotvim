@@ -36,7 +36,6 @@ set fenc=utf-8
 set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936,big5,euc-jp,latin1
 set cursorline
 set cmdheight=2
-set rtp+=/usr/local/opt/go/misc/vim
 set sessionoptions-=help
 set sessionoptions-=options
 set list
@@ -73,6 +72,7 @@ nnoremap <leader>f :silent noautocmd call Grep(expand('<cword>'))<bar>set hls<cr
 nnoremap <leader>fw :silent noautocmd call GrepWord(expand('<cword>'))<bar>set hls<cr>
 vnoremap <leader>f y:silent noautocmd call Grep(@@)<bar>set hls<cr>
 set autowriteall
+set autochdir
 set wildmode=list:longest,full
 set wildignore=*.o,*.obj,*~
 set wildignore+=*DS_Store*
@@ -95,13 +95,6 @@ endif
 function! LoadCscope(git_dir)
   if filereadable(a:git_dir . '/cscope.out')
     execute 'cs add ' . a:git_dir . '/cscope.out ' . a:git_dir . '/../'
-  endif
-endf
-
-function! Chdir2Project(git_dir)
-  let temp = fnamemodify(a:git_dir, ":s?/\.git.*??")
-  if isdirectory(temp)
-    exec 'lc ' temp
   endif
 endf
 
@@ -222,6 +215,7 @@ nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
 
 " Plugins " {{{
 filetype off
+set rtp+=/usr/local/opt/go/libexec/misc/vim/
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
@@ -251,7 +245,6 @@ call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
       \ '.sass-cache',
       \ ], '\|'))
 nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file_rec/async<cr>
-nnoremap <leader>ls :<C-u>Unite -quick-match buffer<cr>
 nnoremap <leader>fg :<C-u>Unite -buffer-name=grep grep:.<CR>
 let g:unite_source_history_yank_enable = 1
 nnoremap <leader>y :<C-u>Unite history/yank<cr>
@@ -297,24 +290,9 @@ function! Fugitive_settings()
   endif
 endfunction
 
-function! Git_dir_settings()
-  if exists('b:git_dir')
-    call s:JumpInit()
-    call LoadCscope(b:git_dir)
-  endif
-endfunction
-
-function! Ch2git_root()
-  if exists('b:git_dir')
-    call Chdir2Project(b:git_dir)
-  endif
-endfunction
-
 augroup fugitive
   autocmd!
-  autocmd BufNewFile,BufReadPost * call Git_dir_settings()
   autocmd BufReadPost fugitive://* call Fugitive_settings()
-  autocmd BufEnter * call Ch2git_root()
 augroup END
 
 Bundle 'tpope/vim-surround'
@@ -352,17 +330,36 @@ augroup MyAutoCmd
   " autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
 augroup END
 
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 Bundle 'SirVer/ultisnips'
+
+" Make UltiSnips works nicely with other sugg plugin
+function! g:UltiSnips_Complete()
+    call UltiSnips_ExpandSnippet()
+    if g:ulti_expand_res == 0
+        if pumvisible()
+            return "\<C-n>"
+        else
+            call UltiSnips_JumpForwards()
+            if g:ulti_jump_forwards_res == 0
+               return "\<TAB>"
+            endif
+        endif
+    endif
+    return ""
+endfunction
+
+au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+
 Bundle 'xudejian/arrow.vim'
-Bundle 'terryma/vim-multiple-cursors'
+"Bundle 'terryma/vim-multiple-cursors'
+Bundle 'joedicastro/vim-multiple-cursors'
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
 Bundle 'airblade/vim-gitgutter'
-
-let g:user_emmet_install_global = 0
 Bundle 'mattn/emmet-vim'
-autocmd FileType html,css EmmetInstall
-
 Bundle 'bling/vim-airline'
 
 Bundle 'tpope/vim-markdown'
@@ -373,7 +370,7 @@ let coffee_watch_vert = 1
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'digitaltoad/vim-jade'
 
-let g:AutoPairsShortcutFastWrap = '<C-S-m>'
+let g:AutoPairsShortcutFastWrap = '<C-S-e>'
 Bundle 'jiangmiao/auto-pairs'
 
 filetype plugin indent on
@@ -397,5 +394,3 @@ colorscheme solarized
 
 set tw=78
 set colorcolumn=+1
-xmap <Tab> >
-xmap <s-tab> <
