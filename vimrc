@@ -197,6 +197,8 @@ if has("gui_running")
     imap <D-9> <C-o><D-9>
     nnoremap <D-0> 10gt
     imap <D-0> <C-o><D-0>
+  else
+    set guifont=Monaco\ 16
   endif
 endif
 if has("gui_running")
