@@ -222,7 +222,6 @@ Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-sensible'
 
 Bundle 'Shougo/vimproc.vim'
-Bundle 'mileszs/ack.vim'
 Bundle 'Shougo/unite.vim'
 Bundle 'Shougo/unite-session'
 
@@ -265,16 +264,6 @@ function! s:unite_settings()
 
   nmap <buffer> <ESC> <Plug>(unite_exit)
 endfunction
-
-if executable('ack-grep')
-  let g:unite_source_grep_command = 'ack-grep'
-  let g:unite_source_grep_default_opts = '--no-heading --no-color -a --binary-files=without-match'
-  let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack')
-  let g:unite_source_grep_command = 'ack'
-  let g:unite_source_grep_default_opts = '--no-heading --no-color -a --binary-files=without-match'
-  let g:unite_source_grep_recursive_opt = ''
-endif
 
 nnoremap <leader><tab> :NERDTreeToggle<cr>
 Bundle 'scrooloose/nerdtree'
