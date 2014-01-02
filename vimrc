@@ -301,6 +301,11 @@ if has('lua')
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 Bundle 'Shougo/neocomplete.vim'
+Bundle 'tsukkee/unite-tag'
+autocmd BufEnter *
+  \   if empty(&buftype)
+  \|    nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag/file<CR>
+  \|  endif
 endif
 
 augroup MyAutoCmd
@@ -367,10 +372,10 @@ autocmd! Syntax * call My_HiTrail()
 autocmd! ColorScheme * call My_HiTrail()
 
 augroup MyAutoCmd
-  autocmd BufWinEnter * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+$/ | endif
-  autocmd InsertEnter * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+\%#\@<!$/ | endif
-  autocmd InsertLeave * if &modifiable && &ft!='unite' | match ExtraWhitespace /\s\+$/ | endif
-  autocmd BufWinLeave * if &modifiable && &ft!='unite' | call clearmatches() | endif
+  autocmd BufWinEnter * if empty(&buftype) && &modifiable | match ExtraWhitespace /\s\+$/ | endif
+  autocmd InsertEnter * if empty(&buftype) && &modifiable | match ExtraWhitespace /\s\+\%#\@<!$/ | endif
+  autocmd InsertLeave * if empty(&buftype) && &modifiable | match ExtraWhitespace /\s\+$/ | endif
+  autocmd BufWinLeave * if empty(&buftype) && &modifiable | call clearmatches() | endif
 augroup END
 
 colorscheme solarized
