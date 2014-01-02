@@ -151,17 +151,6 @@ nnoremap <leader><leader> <c-^>
 command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
   \ | wincmd p | diffthis
 
-nmap <leader>tw :call RemoveTrailingWhitespace()<cr>
-function! RemoveTrailingWhitespace()
-  let _s=@/
-  let c = col(".")
-  let l = line(".")
-  silent! %s/\s\+$//
-  silent! %s/\(\s*\n\)\+\%$//
-  let @/=_s
-  call cursor(l, c)
-endfunction
-
 " tab or buf switch
 function! My_tb_switch()
   if tabpagenr('$') > 1
