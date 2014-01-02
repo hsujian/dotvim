@@ -293,10 +293,6 @@ let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 Bundle 'Shougo/neocomplete.vim'
 Bundle 'tsukkee/unite-tag'
-autocmd BufEnter *
-  \   if empty(&buftype)
-  \|    nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag/file<CR>
-  \|  endif
 endif
 
 augroup MyAutoCmd
