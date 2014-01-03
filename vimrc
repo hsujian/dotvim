@@ -55,22 +55,6 @@ augroup MyAutoCmd
   autocmd!
 augroup END
 
-function! Grep(str)
-  let @/ = a:str
-  exe "grep -srn --binary-files=without-match --exclude-dir=.git --exclude='*.swp' . -e ".shellescape(a:str)
-  cwindow
-endfunction
-
-function! GrepWord(str)
-  let @/ = a:str
-  exe "grep -srnw --binary-files=without-match --exclude-dir=.git --exclude='*.swp' . -e ".shellescape(a:str)
-  cwindow
-endfunction
-
-nnoremap <leader><F1> :tabe ~/.vim/vimrc<cr>
-nnoremap <leader>f :silent noautocmd call Grep(expand('<cword>'))<bar>set hls<cr>
-nnoremap <leader>fw :silent noautocmd call GrepWord(expand('<cword>'))<bar>set hls<cr>
-vnoremap <leader>f y:silent noautocmd call Grep(@@)<bar>set hls<cr>
 set autowriteall
 set autochdir
 set wildmode=list:longest,full
@@ -91,6 +75,19 @@ else
   let &t_SI = "\<Esc>]50;CursorShape=1\x7"
   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
+
+function! GetProjectDir(...)
+  if exists('b:git_dir')
+    let temp = fnamemodify(b:git_dir, ":s?/\.git.*??")
+    if isdirectory(temp)
+      return temp
+    endif
+  endif
+  if empty(a:000)
+    return getcwd()
+  endif
+  return a:1
+endf
 
 function! LoadCscope(git_dir)
   if filereadable(a:git_dir . '/cscope.out')
@@ -140,6 +137,11 @@ if has("autocmd")
 
   autocmd FileType markdown set sw=4 sts=4 ts=4
 
+  nnoremap <leader><F1> :tabe $MYVIMRC<cr>
+  au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
+  if has('gui_running') && !empty($MYGVIMRC)
+    au BufWritePost .gvimrc,_gvimrc,gvimrc so $MYGVIMRC
+  endif
   augroup END
 
 endif " has("autocmd")
@@ -148,7 +150,7 @@ nnoremap <leader><leader> <c-^>
 
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
-command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
   \ | wincmd p | diffthis
 
 " tab or buf switch
@@ -229,13 +231,18 @@ call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
       \ '\.gz',
       \ '\.jpg',
       \ '\.so',
+      \ '\.swp',
       \ '\.png',
       \ '\.gif',
       \ 'tmp/',
+      \ '.tmp/',
       \ '.sass-cache',
       \ ], '\|'))
-nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file_rec/async<cr>
-nnoremap <leader>fg :<C-u>Unite -buffer-name=grep grep:.<CR>
+nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file_rec/async:<c-r>=GetProjectDir()<cr><cr>
+let g:unite_source_grep_default_opts = '-iRHn --binary-files=without-match'
+nnoremap <leader>fg :<C-u>UniteWithCursorWord -buffer-name=grep -auto-highlight grep:<c-r>=GetProjectDir()<cr><CR>
+vnoremap <leader>fg "zy:<C-u>Unite -no-start-insert -auto-highlight grep:<c-r>=GetProjectDir()<cr>::<C-R>z<CR>
+nnoremap <leader>r :<C-u>Unite -buffer-name=files -start-insert file_rec/async:<c-r>=GetProjectDir()<cr><CR>
 let g:unite_source_history_yank_enable = 1
 nnoremap <leader>y :<C-u>Unite history/yank<cr>
 nnoremap <leader>ss :<C-u>UniteSessionSave
@@ -256,7 +263,8 @@ function! s:unite_settings()
   nmap <buffer> <ESC> <Plug>(unite_exit)
 endfunction
 
-nnoremap <leader><tab> :NERDTreeToggle<cr>
+let NERDTreeChDirMode=2
+nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 Bundle 'scrooloose/nerdtree'
 
 Bundle 'tpope/vim-fugitive'
