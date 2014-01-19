@@ -235,7 +235,9 @@ call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
       \ '\.png',
       \ '\.gif',
       \ 'tmp/',
+      \ 'temp/',
       \ '.tmp/',
+      \ 'cache',
       \ '.sass-cache',
       \ ], '\|'))
 nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file_rec/async:<c-r>=GetProjectDir()<cr><cr>
@@ -251,6 +253,16 @@ let g:unite_source_session_enable_auto_save = 1
 let g:unite_split_rule = "botright"
 let g:unite_source_file_mru_limit = 1000
 let g:unite_cursor_line_highlight = 'TabLineSel'
+
+if executable('ack-grep')
+  let g:unite_source_grep_command='ack-grep'
+  let g:unite_source_grep_default_opts='--no-heading --no-color -H -k'
+  let g:unite_source_grep_recursive_opt=''
+elseif executable('ack')
+  let g:unite_source_grep_command='ack'
+  let g:unite_source_grep_default_opts='--no-heading --no-color -H -k'
+  let g:unite_source_grep_recursive_opt=''
+endif
 
 autocmd FileType unite call s:unite_settings()
 function! s:unite_settings()
@@ -352,6 +364,8 @@ Bundle 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'digitaltoad/vim-jade'
+Bundle 'rodjek/vim-puppet'
+Bundle 'taq/vim-refact'
 
 let g:AutoPairsShortcutFastWrap = '<C-S-e>'
 Bundle 'jiangmiao/auto-pairs'
