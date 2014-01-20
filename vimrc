@@ -221,9 +221,9 @@ Bundle 'Shougo/unite-session'
 let g:unite_enable_start_insert = 1
 let g:unite_force_overwrite_statusline = 0
 let g:unite_winheight = 10
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#filters#sorter_default#use(['sorter_rank'])
-call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
+silent! call unite#filters#matcher_default#use(['matcher_fuzzy'])
+silent! call unite#filters#sorter_default#use(['sorter_rank'])
+silent! call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
       \ 'ignore_pattern', join([
       \ '\.git/',
       \ '\.hg/',
@@ -387,7 +387,7 @@ augroup MyAutoCmd
   autocmd BufWinLeave * if empty(&buftype) && &modifiable | call clearmatches() | endif
 augroup END
 
-colorscheme solarized
+silent! colorscheme solarized
 
 set tw=78
 set colorcolumn=+1
