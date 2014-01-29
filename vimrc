@@ -8,8 +8,71 @@ endif
 
 set nocompatible
 
+" Plugins " {{{
+filetype off
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'gmarik/vundle'
+Bundle 'tpope/vim-sensible'
+
+Bundle 'Shougo/vimproc.vim'
+Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/unite-session'
+
+let NERDTreeChDirMode=2
+Bundle 'scrooloose/nerdtree'
+
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-surround'
+
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'godlygeek/tabular'
+
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'editorconfig/editorconfig-vim'
+Bundle 'scrooloose/syntastic'
+
+Bundle 'Lokaltog/vim-easymotion'
+Bundle 'sjl/gundo.vim'
+
+if has('lua')
+let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#enable_smart_case = 1
+Bundle 'Shougo/neocomplete.vim'
+Bundle 'tsukkee/unite-tag'
+endif
+
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+Bundle 'SirVer/ultisnips'
+Bundle 'xudejian/arrow.vim'
+"Bundle 'terryma/vim-multiple-cursors'
+Bundle 'joedicastro/vim-multiple-cursors'
+let g:gitgutter_realtime = 0
+let g:gitgutter_eager = 0
+Bundle 'airblade/vim-gitgutter'
+Bundle 'mattn/emmet-vim'
+Bundle 'bling/vim-airline'
+
+Bundle 'tpope/vim-markdown'
+Bundle 'dart-lang/dart-vim-plugin'
+Bundle 'pangloss/vim-javascript'
+Bundle 'kchmck/vim-coffee-script'
+let coffee_watch_vert = 1
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'digitaltoad/vim-jade'
+Bundle 'rodjek/vim-puppet'
+Bundle 'taq/vim-refact'
+
+let g:AutoPairsShortcutFastWrap = '<C-S-e>'
+Bundle 'jiangmiao/auto-pairs'
+
+filetype plugin indent on
+" " }}}
+
 set showmode
-set number
+set rnu
 set numberwidth=1
 set hlsearch
 set ignorecase
@@ -107,7 +170,6 @@ vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 
 "jump to last cursor position when opening a file
 "dont do it when writing a commit log entry
-autocmd BufReadPost * call SetCursorPosition()
 function! SetCursorPosition()
   if &filetype !~ 'svn\|commit\c'
     if line("'\"") > 0 && line("'\"") <= line("$")
@@ -117,8 +179,6 @@ function! SetCursorPosition()
   end
 endfunction
 
-"spell check when writing commit logs
-autocmd filetype svn,*commit* setlocal spell
 
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
@@ -136,6 +196,8 @@ if has("autocmd")
   au FocusLost * silent! wa
 
   autocmd FileType markdown set sw=4 sts=4 ts=4
+  autocmd filetype svn,*commit* setlocal spell
+  autocmd BufReadPost * call SetCursorPosition()
 
   nnoremap <leader><F1> :tabe $MYVIMRC<cr>
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
@@ -206,17 +268,7 @@ endif
 
 nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
 
-" Plugins " {{{
-filetype off
-set rtp+=/usr/local/opt/go/libexec/misc/vim/
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-Bundle 'gmarik/vundle'
-Bundle 'tpope/vim-sensible'
-
-Bundle 'Shougo/vimproc.vim'
-Bundle 'Shougo/unite.vim'
-Bundle 'Shougo/unite-session'
+nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 
 let g:unite_enable_start_insert = 1
 let g:unite_force_overwrite_statusline = 0
@@ -236,6 +288,7 @@ silent! call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,g
       \ '\.gif',
       \ 'tmp/',
       \ 'temp/',
+      \ 'assets/',
       \ '.tmp/',
       \ 'cache',
       \ '.sass-cache',
@@ -254,16 +307,6 @@ let g:unite_split_rule = "botright"
 let g:unite_source_file_mru_limit = 1000
 let g:unite_cursor_line_highlight = 'TabLineSel'
 
-if executable('ack-grep')
-  let g:unite_source_grep_command='ack-grep'
-  let g:unite_source_grep_default_opts='--no-heading --no-color -H -k'
-  let g:unite_source_grep_recursive_opt=''
-elseif executable('ack')
-  let g:unite_source_grep_command='ack'
-  let g:unite_source_grep_default_opts='--no-heading --no-color -H -k'
-  let g:unite_source_grep_recursive_opt=''
-endif
-
 autocmd FileType unite call s:unite_settings()
 function! s:unite_settings()
   imap <buffer> <C-j>   <Plug>(unite_select_next_line)
@@ -275,11 +318,6 @@ function! s:unite_settings()
   nmap <buffer> <ESC> <Plug>(unite_exit)
 endfunction
 
-let NERDTreeChDirMode=2
-nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
-Bundle 'scrooloose/nerdtree'
-
-Bundle 'tpope/vim-fugitive'
 nmap <leader>gw :Gwrite<cr>
 nmap <leader>gc :Gcommit<cr>
 
@@ -289,31 +327,14 @@ autocmd User fugitive
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
 
-Bundle 'tpope/vim-surround'
-
-Bundle 'scrooloose/nerdcommenter'
-Bundle 'godlygeek/tabular'
 nmap <leader>a= :Tabularize /=<cr>
 vmap <leader>a= :Tabularize /=<cr>
 nmap <leader>a; :Tabularize /:\zs<cr>
 vmap <leader>a; :Tabularize /:\zs<cr>
 
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'editorconfig/editorconfig-vim'
-Bundle 'scrooloose/syntastic'
-
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'sjl/gundo.vim'
 set undodir^=~/.vim/undo
 set undofile
 nnoremap <leader>u :GundoToggle<cr>
-
-if has('lua')
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
-Bundle 'Shougo/neocomplete.vim'
-Bundle 'tsukkee/unite-tag'
-endif
 
 augroup MyAutoCmd
   autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -324,11 +345,6 @@ augroup MyAutoCmd
   autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
   " autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
 augroup END
-
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-Bundle 'SirVer/ultisnips'
 
 " Make UltiSnips works nicely with other sugg plugin
 function! g:UltiSnips_Complete()
@@ -348,31 +364,6 @@ endfunction
 
 au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
 
-Bundle 'xudejian/arrow.vim'
-"Bundle 'terryma/vim-multiple-cursors'
-Bundle 'joedicastro/vim-multiple-cursors'
-let g:gitgutter_realtime = 0
-let g:gitgutter_eager = 0
-Bundle 'airblade/vim-gitgutter'
-Bundle 'mattn/emmet-vim'
-Bundle 'bling/vim-airline'
-
-Bundle 'tpope/vim-markdown'
-Bundle 'dart-lang/dart-vim-plugin'
-Bundle 'pangloss/vim-javascript'
-Bundle 'kchmck/vim-coffee-script'
-let coffee_watch_vert = 1
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'digitaltoad/vim-jade'
-Bundle 'rodjek/vim-puppet'
-Bundle 'taq/vim-refact'
-
-let g:AutoPairsShortcutFastWrap = '<C-S-e>'
-Bundle 'jiangmiao/auto-pairs'
-
-filetype plugin indent on
-" " }}}
-
 function! My_HiTrail()
   highlight ExtraWhitespace ctermbg=red guibg=red
   match ExtraWhitespace /\s\+$/
@@ -391,3 +382,22 @@ silent! colorscheme solarized
 
 set tw=78
 set colorcolumn=+1
+
+if executable('ag')
+  set grepprg=ag\ --nogroup\ --nocolor
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts =
+        \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
+        \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack')
+  let g:unite_source_grep_command = 'ack'
+  let g:unite_source_grep_default_opts =
+        \ '--no-heading --no-color -a -H'
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack-grep')
+  let g:unite_source_grep_command = 'ack-grep'
+  let g:unite_source_grep_default_opts =
+        \ '--no-heading --no-color -a -H'
+  let g:unite_source_grep_recursive_opt = ''
+endif
