@@ -45,13 +45,12 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 Bundle 'SirVer/ultisnips'
-Bundle 'xudejian/arrow.vim'
 "Bundle 'terryma/vim-multiple-cursors'
 Bundle 'joedicastro/vim-multiple-cursors'
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
 Bundle 'airblade/vim-gitgutter'
-Bundle 'mattn/emmet-vim'
+Bundle 'wavded/vim-stylus'
 Bundle 'bling/vim-airline'
 
 Bundle 'tpope/vim-markdown'
@@ -72,7 +71,6 @@ filetype plugin indent on
 " " }}}
 
 set showmode
-set nu
 set rnu
 set hlsearch
 set ignorecase
@@ -96,7 +94,7 @@ set si
 set encoding=utf-8
 set fenc=utf-8
 set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936,big5,euc-jp,latin1
-set cursorline
+syntax sync minlines=256
 set cmdheight=2
 set sessionoptions-=help
 set sessionoptions-=options
@@ -107,7 +105,6 @@ set splitright
 set splitbelow
 try
   set switchbuf=useopen,usetab,newtab
-  set stal=2
 catch
 endtry
 nnoremap <F3> :cn<cr>
@@ -240,6 +237,7 @@ silent! call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,g
       \ '\.gif',
       \ 'tmp/',
       \ 'temp/',
+      \ 'node_modules/',
       \ 'assets/',
       \ '.tmp/',
       \ 'cache',
@@ -249,6 +247,7 @@ nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer file_mru book
 let g:unite_source_grep_default_opts = '-iRHn --binary-files=without-match'
 nnoremap <leader>fg :<C-u>UniteWithCursorWord -buffer-name=grep -auto-highlight grep:<c-r>=GetProjectDir()<cr><CR>
 vnoremap <leader>fg "zy:<C-u>Unite -no-start-insert -auto-highlight grep:<c-r>=GetProjectDir()<cr>::<C-R>z<CR>
+nnoremap <leader><leader>fg :<C-u>UniteResume grep<CR>
 nnoremap <leader>r :<C-u>Unite -buffer-name=files -start-insert file_rec/async:<c-r>=GetProjectDir()<cr><CR>
 let g:unite_source_history_yank_enable = 1
 nnoremap <leader>y :<C-u>Unite history/yank<cr>
@@ -267,6 +266,9 @@ function! s:unite_settings()
   imap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
   imap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
 
+  nmap <silent><buffer><expr> <C-x> unite#do_action('split')
+  nmap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+  nmap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
   nmap <buffer> <ESC> <Plug>(unite_exit)
 endfunction
 
@@ -336,7 +338,7 @@ set tw=78
 set colorcolumn=+1
 
 if executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor
+  set grepprg=ag\ -S\ --nogroup\ --nocolor
   let g:unite_source_grep_command = 'ag'
   let g:unite_source_grep_default_opts =
         \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
@@ -353,3 +355,20 @@ elseif executable('ack-grep')
         \ '--no-heading --no-color -a -H'
   let g:unite_source_grep_recursive_opt = ''
 endif
+
+" Vim. Live it. ------------------------------------------------------- {{{
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+" }}}
+
+noremap <expr> <Home> (col('.') == matchend(getline('.'), '^\s*')+1 ? '0' : '^')
+noremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$' : 'g_')
+vnoremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$h' : 'g_')
+imap <Home> <C-o><Home>
+imap <End> <C-o><End>

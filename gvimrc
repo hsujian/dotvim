@@ -56,3 +56,12 @@ let g:previous_tab = 1
 autocmd TabLeave * let g:previous_tab = tabpagenr()
 noremap <F1> :call My_tb_switch()<CR>
 imap <F1> <C-o><F1>
+
+if has("gui_macvim")
+  no <expr> <D-Left> (tabpagenr() ? 'gT' : ':bp')
+  no <expr> <D-Right> (tabpagenr() ? 'gt' : ':bn')
+  no <D-S-Left> :tabm -1<cr>
+  no <D-S-Right> :tabm +1<cr>
+  imap <D-S-Left> <C-o><D-S-Left>
+  imap <D-S-Right> <C-o><D-S-Right>
+endif
