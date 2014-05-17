@@ -16,6 +16,7 @@ Bundle 'gmarik/vundle'
 
 Bundle 'Shougo/vimproc.vim'
 Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/neomru.vim'
 Bundle 'Shougo/unite-session'
 
 let NERDTreeChDirMode=2
@@ -55,7 +56,7 @@ Bundle 'bling/vim-airline'
 
 Bundle 'tpope/vim-markdown'
 Bundle 'dart-lang/dart-vim-plugin'
-Bundle 'pangloss/vim-javascript'
+Bundle 'jelera/vim-javascript-syntax'
 Bundle 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
 Bundle 'vim-ruby/vim-ruby'
@@ -71,7 +72,7 @@ filetype plugin indent on
 " " }}}
 
 set showmode
-set rnu
+set nu
 set hlsearch
 set ignorecase
 set wrap
@@ -195,7 +196,7 @@ if has("autocmd")
   autocmd filetype svn,*commit* setlocal spell
   autocmd BufReadPost * call SetCursorPosition()
 
-  nnoremap <leader><F1> :tabe $MYVIMRC<cr>
+  nnoremap <leader><F1> :split $MYVIMRC<cr>
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
   augroup END
 
@@ -208,9 +209,9 @@ nnoremap <leader><leader> <c-^>
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
   \ | wincmd p | diffthis
 
+set wildchar=<Tab> wildmenu wildmode=full
+set wildcharm=<C-Z>
 if !has("gui_running")
-  set wildchar=<Tab> wildmenu wildmode=full
-  set wildcharm=<C-Z>
   nnoremap <F1> :b <C-Z>
   imap <F1> <C-o><F1>
 endif
@@ -222,6 +223,7 @@ nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 let g:unite_enable_start_insert = 1
 let g:unite_force_overwrite_statusline = 0
 let g:unite_winheight = 10
+let g:unite_source_session_options=&sessionoptions
 silent! call unite#filters#matcher_default#use(['matcher_fuzzy'])
 silent! call unite#filters#sorter_default#use(['sorter_rank'])
 silent! call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
@@ -238,7 +240,6 @@ silent! call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,g
       \ 'tmp/',
       \ 'temp/',
       \ 'node_modules/',
-      \ 'assets/',
       \ '.tmp/',
       \ 'cache',
       \ '.sass-cache',
@@ -302,12 +303,12 @@ augroup END
 
 " Make UltiSnips works nicely with other sugg plugin
 function! g:UltiSnips_Complete()
-    call UltiSnips_ExpandSnippet()
+    call UltiSnips#ExpandSnippet()
     if g:ulti_expand_res == 0
         if pumvisible()
             return "\<C-n>"
         else
-            call UltiSnips_JumpForwards()
+            call UltiSnips#JumpForwards()
             if g:ulti_jump_forwards_res == 0
                return "\<TAB>"
             endif
