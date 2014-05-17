@@ -14,16 +14,6 @@ augroup gvimrcEx
   endif
 augroup END
 
-" tab or buf switch
-function! My_tb_switch()
-  if tabpagenr('$') > 1
-    exe "tabn" g:previous_tab
-  else
-    exe 'b#'
-  endif
-endfunction
-" switch end
-
 au FocusGained * set guitablabel=%M%N\ %t
 
 if has("gui_macvim")
@@ -51,11 +41,6 @@ if has("gui_macvim")
 else
   set guifont=Monaco\ 16
 endif
-
-let g:previous_tab = 1
-autocmd TabLeave * let g:previous_tab = tabpagenr()
-noremap <F1> :call My_tb_switch()<CR>
-imap <F1> <C-o><F1>
 
 if has("gui_macvim")
   no <expr> <D-Left> (tabpagenr() ? 'gT' : ':bp')

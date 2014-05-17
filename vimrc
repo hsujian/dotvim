@@ -33,13 +33,12 @@ Bundle 'editorconfig/editorconfig-vim'
 Bundle 'scrooloose/syntastic'
 
 Bundle 'Lokaltog/vim-easymotion'
-Bundle 'sjl/gundo.vim'
+Bundle 'sjlrgundo.vim'
 
 if has('lua')
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 Bundle 'Shougo/neocomplete.vim'
-Bundle 'tsukkee/unite-tag'
 endif
 
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -211,10 +210,30 @@ command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 
 set wildchar=<Tab> wildmenu wildmode=full
 set wildcharm=<C-Z>
-if !has("gui_running")
-  nnoremap <F1> :b <C-Z>
-  imap <F1> <C-o><F1>
-endif
+
+" tab or buf switch
+let g:previous_tab = 1
+function! My_tb_switch()
+  if tabpagenr('$') > 1
+    exe "tabn" g:previous_tab
+  elseif bufnr('$') == 2
+    b#
+  elseif bufnr('$') > 2
+    if exists('g:loaded_unite')
+      Unite -start-insert buffer bookmark
+    else
+      buffers
+      let select_buf_nr = input("Enter buffer number: ")
+      if(strlen(select_buf_nr) != 0)
+        exe ":buffer ". select_buf_nr
+      endif
+    endif
+  endif
+endfunction
+autocmd TabLeave * let g:previous_tab = tabpagenr()
+noremap <silent><F1> :call My_tb_switch()<CR>
+imap <F1> <C-o><F1>
+" switch end
 
 nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
 
@@ -320,8 +339,10 @@ endfunction
 au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
 
 function! My_HiTrail()
-  highlight ExtraWhitespace ctermbg=red guibg=red
-  match ExtraWhitespace /\s\+$/
+  if empty(&buftype)
+    highlight ExtraWhitespace ctermbg=red guibg=red
+    match ExtraWhitespace /\s\+$/
+  endif
 endfunction
 autocmd! Syntax * call My_HiTrail()
 autocmd! ColorScheme * call My_HiTrail()
