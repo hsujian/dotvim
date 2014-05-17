@@ -9,7 +9,7 @@ augroup gvimrcEx
   au!
 
   if !empty($MYGVIMRC)
-    nnoremap <leader><F1> :tabe $MYVIMRC<cr>:tabe $MYGVIMRC<cr>
+    nnoremap <leader><F1> :tabe $MYGVIMRC<cr>:split $MYVIMRC<cr>
     au BufWritePost .gvimrc,_gvimrc,gvimrc so $MYGVIMRC
   endif
 augroup END
