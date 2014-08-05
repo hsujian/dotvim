@@ -7,7 +7,7 @@ if v:progname =~? "evim"
 endif
 
 set nocompatible
-
+let mysyntaxfile='~/.vim/mysyntaxfile.vim'
 " Plugins " {{{
 filetype off
 set rtp+=~/.vim/bundle/vundle/
@@ -33,7 +33,7 @@ Bundle 'editorconfig/editorconfig-vim'
 Bundle 'scrooloose/syntastic'
 
 Bundle 'Lokaltog/vim-easymotion'
-Bundle 'sjlrgundo.vim'
+Bundle 'sjl/gundo.vim'
 
 if has('lua')
 let g:neocomplete#enable_at_startup = 1
@@ -65,7 +65,6 @@ Bundle 'taq/vim-refact'
 
 let g:AutoPairsShortcutFastWrap = '<C-S-e>'
 Bundle 'jiangmiao/auto-pairs'
-
 Bundle 'tpope/vim-sensible'
 filetype plugin indent on
 " " }}}
@@ -98,7 +97,7 @@ syntax sync minlines=256
 set cmdheight=2
 set sessionoptions-=help
 set sessionoptions-=options
-set list
+"set list
 map <silent> <F11> :set invlist<CR>
 set mat=2
 set splitright
@@ -136,12 +135,19 @@ else
 endif
 
 function! GetProjectDir(...)
+  let dn = expand('%:p:h') . '/'
+  let idx = matchend(dn, "/node_modules/[^/]*/")
+  if idx > 0
+    return dn[:idx-1]
+  endif
+
   if exists('b:git_dir')
     let temp = fnamemodify(b:git_dir, ":s?/\.git.*??")
     if isdirectory(temp)
       return temp
     endif
   endif
+
   if empty(a:000)
     return getcwd()
   endif
@@ -192,6 +198,7 @@ if has("autocmd")
   au FocusLost * silent! wa
 
   autocmd FileType markdown set sw=4 sts=4 ts=4
+  autocmd FileType Makefile set noet
   autocmd filetype svn,*commit* setlocal spell
   autocmd BufReadPost * call SetCursorPosition()
 
@@ -213,10 +220,8 @@ set wildcharm=<C-Z>
 
 " tab or buf switch
 let g:previous_tab = 1
-function! My_tb_switch()
-  if tabpagenr('$') > 1
-    exe "tabn" g:previous_tab
-  elseif bufnr('$') == 2
+function! My_buf_switch()
+  if bufnr('$') == 2
     b#
   elseif bufnr('$') > 2
     if exists('g:loaded_unite')
@@ -230,8 +235,18 @@ function! My_tb_switch()
     endif
   endif
 endfunction
+
+function! My_tb_switch()
+  if tabpagenr('$') > 1
+    exe "tabn" g:previous_tab
+  else
+    call My_buf_switch()
+  endif
+endfunction
 autocmd TabLeave * let g:previous_tab = tabpagenr()
-noremap <silent><F1> :call My_tb_switch()<CR>
+noremap <silent><F2> :call My_tb_switch()<CR>
+imap <F2> <C-o><F2>
+noremap <silent><F1> :call My_buf_switch()<CR>
 imap <F1> <C-o><F1>
 " switch end
 
@@ -239,9 +254,8 @@ nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
 
 nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 
-let g:unite_enable_start_insert = 1
-let g:unite_force_overwrite_statusline = 0
-let g:unite_winheight = 10
+"let g:unite_enable_start_insert = 1
+"let g:unite_force_overwrite_statusline = 0
 let g:unite_source_session_options=&sessionoptions
 silent! call unite#filters#matcher_default#use(['matcher_fuzzy'])
 silent! call unite#filters#sorter_default#use(['sorter_rank'])
@@ -258,7 +272,6 @@ silent! call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,g
       \ '\.gif',
       \ 'tmp/',
       \ 'temp/',
-      \ 'node_modules/',
       \ '.tmp/',
       \ 'cache',
       \ '.sass-cache',
@@ -274,7 +287,6 @@ nnoremap <leader>y :<C-u>Unite history/yank<cr>
 nnoremap <leader>ss :<C-u>UniteSessionSave
 nnoremap <leader>sr :<C-u>Unite -buffer-name=sessions session
 let g:unite_source_session_enable_auto_save = 1
-let g:unite_split_rule = "botright"
 let g:unite_source_file_mru_limit = 1000
 let g:unite_cursor_line_highlight = 'TabLineSel'
 
@@ -337,22 +349,6 @@ function! g:UltiSnips_Complete()
 endfunction
 
 au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-
-function! My_HiTrail()
-  if empty(&buftype)
-    highlight ExtraWhitespace ctermbg=red guibg=red
-    match ExtraWhitespace /\s\+$/
-  endif
-endfunction
-autocmd! Syntax * call My_HiTrail()
-autocmd! ColorScheme * call My_HiTrail()
-
-augroup MyAutoCmd
-  autocmd BufWinEnter * if empty(&buftype) && &modifiable | match ExtraWhitespace /\s\+$/ | endif
-  autocmd InsertEnter * if empty(&buftype) && &modifiable | match ExtraWhitespace /\s\+\%#\@<!$/ | endif
-  autocmd InsertLeave * if empty(&buftype) && &modifiable | match ExtraWhitespace /\s\+$/ | endif
-  autocmd BufWinLeave * if empty(&buftype) && &modifiable | call clearmatches() | endif
-augroup END
 
 silent! colorscheme solarized
 
