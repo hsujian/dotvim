@@ -374,16 +374,6 @@ if executable('ag')
         \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
         \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
   let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack')
-  let g:unite_source_grep_command = 'ack'
-  let g:unite_source_grep_default_opts =
-        \ '--no-heading --no-color -a -H'
-  let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack-grep')
-  let g:unite_source_grep_command = 'ack-grep'
-  let g:unite_source_grep_default_opts =
-        \ '--no-heading --no-color -a -H'
-  let g:unite_source_grep_recursive_opt = ''
 endif
 
 " Vim. Live it. ------------------------------------------------------- {{{
