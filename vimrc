@@ -1,8 +1,8 @@
-" This is Dejian's .vimrc file
+" This is Dejian's .vimrc file lyc
 " vim:set ts=2 sts=2 sw=2 expandtab:
 "
 " When started as "evim", evim.vim will already have done these settings.
-if v:progname =~? "evim"
+if v:progname =~?  "evim"
   finish
 endif
 
