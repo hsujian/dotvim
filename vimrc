@@ -7,9 +7,11 @@ if v:progname =~? "evim"
 endif
 
 set nocompatible
-let mysyntaxfile='~/.vim/mysyntaxfile.vim'
 " Plugins " {{{
 filetype off
+filetype plugin indent off
+let mapleader = ','
+set runtimepath+=$GOROOT/misc/vim " replace $GOROOT with the output of: go env GOROOT
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
@@ -31,6 +33,7 @@ Bundle 'godlygeek/tabular'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'editorconfig/editorconfig-vim'
 Bundle 'scrooloose/syntastic'
+Bundle 'a.vim'
 
 Bundle 'Lokaltog/vim-easymotion'
 Bundle 'sjl/gundo.vim'
@@ -67,6 +70,7 @@ let g:AutoPairsShortcutFastWrap = '<C-S-e>'
 Bundle 'jiangmiao/auto-pairs'
 Bundle 'tpope/vim-sensible'
 filetype plugin indent on
+syntax on
 " " }}}
 
 set showmode
@@ -198,7 +202,7 @@ if has("autocmd")
   au FocusLost * silent! wa
 
   autocmd FileType markdown set sw=4 sts=4 ts=4
-  autocmd FileType Makefile set noet
+  autocmd FileType c,cpp,Makefile set sw=4 sts=4 ts=4 noet
   autocmd filetype svn,*commit* setlocal spell
   autocmd BufReadPost * call SetCursorPosition()
 
@@ -352,6 +356,14 @@ au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:U
 
 silent! colorscheme solarized
 
+function! MyWS()
+  if !hlexists('ExtraWhitespace')
+    hi ExtraWhitespace ctermbg=red guibg=red
+  endif
+  match ExtraWhitespace /\s\+$/
+endfun
+au Syntax * if empty(&buftype) && &modifiable | call MyWS() | endif
+
 set tw=78
 set colorcolumn=+1
 
@@ -361,16 +373,6 @@ if executable('ag')
   let g:unite_source_grep_default_opts =
         \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
         \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
-  let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack')
-  let g:unite_source_grep_command = 'ack'
-  let g:unite_source_grep_default_opts =
-        \ '--no-heading --no-color -a -H'
-  let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack-grep')
-  let g:unite_source_grep_command = 'ack-grep'
-  let g:unite_source_grep_default_opts =
-        \ '--no-heading --no-color -a -H'
   let g:unite_source_grep_recursive_opt = ''
 endif
 
@@ -390,3 +392,5 @@ noremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$' : 'g_')
 vnoremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$h' : 'g_')
 imap <Home> <C-o><Home>
 imap <End> <C-o><End>
+
+nnoremap <F12> :AT<cr>
