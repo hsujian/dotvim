@@ -1,7 +1,6 @@
 " This is Dejian's .vimrc file
 " vim:set ts=2 sts=2 sw=2 expandtab:
 "
-" When started as "evim", evim.vim will already have done these settings.
 if v:progname =~? "evim"
   finish
 endif
@@ -9,66 +8,70 @@ endif
 set nocompatible
 " Plugins " {{{
 filetype off
-filetype plugin indent off
-let mapleader = ','
-set runtimepath+=$GOROOT/misc/vim " replace $GOROOT with the output of: go env GOROOT
 set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-Bundle 'gmarik/vundle'
+call vundle#begin()
+Plugin 'gmarik/vundle'
 
-Bundle 'Shougo/vimproc.vim'
-Bundle 'Shougo/unite.vim'
-Bundle 'Shougo/neomru.vim'
-Bundle 'Shougo/unite-session'
+Plugin 'tpope/vim-sensible'
+let g:AutoPairsShortcutFastWrap = '<C-S-e>'
+Plugin 'jiangmiao/auto-pairs'
+
+Plugin 'Shougo/vimproc.vim'
+Plugin 'Shougo/unite.vim'
+Plugin 'Shougo/neomru.vim'
+Plugin 'Shougo/unite-session'
+
+let g:user_emmet_install_global = 0
+Plugin 'mattn/emmet-vim'
 
 let NERDTreeChDirMode=2
-Bundle 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdtree'
 
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-surround'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-surround'
 
-Bundle 'scrooloose/nerdcommenter'
-Bundle 'godlygeek/tabular'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'godlygeek/tabular'
 
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'editorconfig/editorconfig-vim'
-Bundle 'scrooloose/syntastic'
-Bundle 'a.vim'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'editorconfig/editorconfig-vim'
+Plugin 'scrooloose/syntastic'
+Plugin 'a.vim'
 
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'sjl/gundo.vim'
+Plugin 'Lokaltog/vim-easymotion'
+Plugin 'sjl/gundo.vim'
 
 if has('lua')
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
-Bundle 'Shougo/neocomplete.vim'
+Plugin 'Shougo/neocomplete.vim'
 endif
 
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-Bundle 'SirVer/ultisnips'
-"Bundle 'terryma/vim-multiple-cursors'
-Bundle 'joedicastro/vim-multiple-cursors'
+Plugin 'SirVer/ultisnips'
+"Plugin 'terryma/vim-multiple-cursors'
+Plugin 'joedicastro/vim-multiple-cursors'
+
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
-Bundle 'airblade/vim-gitgutter'
-Bundle 'wavded/vim-stylus'
-Bundle 'bling/vim-airline'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'wavded/vim-stylus'
+Plugin 'bling/vim-airline'
 
-Bundle 'tpope/vim-markdown'
-Bundle 'dart-lang/dart-vim-plugin'
-Bundle 'jelera/vim-javascript-syntax'
-Bundle 'kchmck/vim-coffee-script'
+Plugin 'tpope/vim-markdown'
+Plugin 'dart-lang/dart-vim-plugin'
+Plugin 'jelera/vim-javascript-syntax'
+Plugin 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'digitaltoad/vim-jade'
-Bundle 'rodjek/vim-puppet'
-Bundle 'taq/vim-refact'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'digitaltoad/vim-jade'
+Plugin 'rodjek/vim-puppet'
+Plugin 'taq/vim-refact'
+Plugin 'fatih/vim-go'
 
-let g:AutoPairsShortcutFastWrap = '<C-S-e>'
-Bundle 'jiangmiao/auto-pairs'
-Bundle 'tpope/vim-sensible'
+call vundle#end()
 filetype plugin indent on
 syntax on
 " " }}}
@@ -201,12 +204,13 @@ if has("autocmd")
   au FileChangedShell * Warn "File has been changed outside of Vim."
   au FocusLost * silent! wa
 
+  autocmd FileType html,css EmmetInstall
   autocmd FileType markdown set sw=4 sts=4 ts=4
   autocmd FileType c,cpp,Makefile set sw=4 sts=4 ts=4 noet
   autocmd filetype svn,*commit* setlocal spell
   autocmd BufReadPost * call SetCursorPosition()
 
-  nnoremap <leader><F1> :split $MYVIMRC<cr>
+  nnoremap <leader><F1> :tabe $MYVIMRC<cr>
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
   augroup END
 
@@ -253,8 +257,6 @@ imap <F2> <C-o><F2>
 noremap <silent><F1> :call My_buf_switch()<CR>
 imap <F1> <C-o><F1>
 " switch end
-
-nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
 
 nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 
@@ -376,6 +378,10 @@ if executable('ag')
   let g:unite_source_grep_recursive_opt = ''
 endif
 
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+
 " Vim. Live it. ------------------------------------------------------- {{{
 nnoremap <up> <nop>
 nnoremap <down> <nop>
@@ -392,5 +398,3 @@ noremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$' : 'g_')
 vnoremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$h' : 'g_')
 imap <Home> <C-o><Home>
 imap <End> <C-o><End>
-
-nnoremap <F12> :AT<cr>
