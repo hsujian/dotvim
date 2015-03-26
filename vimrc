@@ -65,10 +65,8 @@ Plugin 'dart-lang/dart-vim-plugin'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
-Plugin 'vim-ruby/vim-ruby'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'rodjek/vim-puppet'
-Plugin 'taq/vim-refact'
 
 let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
@@ -216,10 +214,6 @@ if has("autocmd")
   autocmd FileType c,cpp,Makefile set sw=4 sts=4 ts=4 noet
   autocmd filetype svn,*commit* setlocal spell
   autocmd BufReadPost * call SetCursorPosition()
-
-  autocmd VimEnter * nested :call tagbar#autoopen(1)
-  autocmd FileType * nested :call tagbar#autoopen(0)
-  autocmd BufEnter * nested :call tagbar#autoopen(0)
 
   nnoremap <leader><F1> :tabe $MYVIMRC<cr>
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
