@@ -2,6 +2,7 @@
 " vim:set ts=2 sts=2 sw=2 expandtab:
 
 set guioptions-=r
+set guioptions-=L
 set mouse=a
 set ttymouse=xterm2
 
