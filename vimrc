@@ -37,7 +37,7 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'editorconfig/editorconfig-vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'a.vim'
-
+Plugin 'majutsushi/tagbar'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'sjl/gundo.vim'
 
@@ -65,10 +65,15 @@ Plugin 'dart-lang/dart-vim-plugin'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
-Plugin 'vim-ruby/vim-ruby'
 Plugin 'digitaltoad/vim-jade'
 Plugin 'rodjek/vim-puppet'
-Plugin 'taq/vim-refact'
+
+let g:go_fmt_command = "goimports"
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
 Plugin 'fatih/vim-go'
 
 call vundle#end()
@@ -377,10 +382,6 @@ if executable('ag')
         \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
   let g:unite_source_grep_recursive_opt = ''
 endif
-
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_structs = 1
 
 " Vim. Live it. ------------------------------------------------------- {{{
 nnoremap <up> <nop>
