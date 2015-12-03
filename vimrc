@@ -19,10 +19,6 @@ Plugin 'jiangmiao/auto-pairs'
 Plugin 'Shougo/vimproc.vim'
 Plugin 'Shougo/unite.vim'
 Plugin 'Shougo/neomru.vim'
-Plugin 'Shougo/unite-session'
-
-let g:user_emmet_install_global = 0
-Plugin 'mattn/emmet-vim'
 
 let NERDTreeChDirMode=2
 Plugin 'scrooloose/nerdtree'
@@ -31,13 +27,11 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
 
 Plugin 'scrooloose/nerdcommenter'
-Plugin 'godlygeek/tabular'
 
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'editorconfig/editorconfig-vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'a.vim'
-Plugin 'majutsushi/tagbar'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'sjl/gundo.vim'
 
@@ -57,16 +51,14 @@ Plugin 'joedicastro/vim-multiple-cursors'
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
 Plugin 'airblade/vim-gitgutter'
-Plugin 'wavded/vim-stylus'
 Plugin 'bling/vim-airline'
 
 Plugin 'tpope/vim-markdown'
-Plugin 'dart-lang/dart-vim-plugin'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
 Plugin 'digitaltoad/vim-jade'
-Plugin 'rodjek/vim-puppet'
+Plugin 'posva/vim-vue'
 
 let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
@@ -91,7 +83,6 @@ set linebreak
 set shiftwidth=2
 set softtabstop=2
 set tabstop=2
-set expandtab
 set foldmethod=indent
 set nofoldenable
 set formatoptions-=o
@@ -209,8 +200,7 @@ if has("autocmd")
   au FileChangedShell * Warn "File has been changed outside of Vim."
   au FocusLost * silent! wa
 
-  autocmd FileType html,css EmmetInstall
-  autocmd FileType markdown set sw=4 sts=4 ts=4
+  autocmd FileType markdown set sw=4 sts=4 ts=4 noet
   autocmd FileType c,cpp,Makefile set sw=4 sts=4 ts=4 noet
   autocmd filetype svn,*commit* setlocal spell
   autocmd BufReadPost * call SetCursorPosition()
@@ -267,9 +257,9 @@ nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 
 "let g:unite_enable_start_insert = 1
 "let g:unite_force_overwrite_statusline = 0
-let g:unite_source_session_options=&sessionoptions
+let g:unite_source_rec_max_cache_files = 0
+let g:unite_winheight = 10
 silent! call unite#filters#matcher_default#use(['matcher_fuzzy'])
-silent! call unite#filters#sorter_default#use(['sorter_rank'])
 silent! call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
       \ 'ignore_pattern', join([
       \ '\.git/',
@@ -287,7 +277,12 @@ silent! call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,g
       \ 'cache',
       \ '.sass-cache',
       \ ], '\|'))
-nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file_rec/async:<c-r>=GetProjectDir()<cr><cr>
+
+silent! call unite#custom#source('file_rec/async', 'converters', [])
+silent! call unite#custom#source('file_rec/async', 'sorters', [])
+silent! call unite#custom#source('file_rec/async', 'max_candidates', 10)
+
+nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file_rec/git<cr>
 let g:unite_source_grep_default_opts = '-iRHn --binary-files=without-match'
 nnoremap <leader>fg :<C-u>UniteWithCursorWord -buffer-name=grep -auto-highlight grep:<c-r>=GetProjectDir()<cr><CR>
 vnoremap <leader>fg "zy:<C-u>Unite -no-start-insert -auto-highlight grep:<c-r>=GetProjectDir()<cr>::<C-R>z<CR>
@@ -295,10 +290,6 @@ nnoremap <leader><leader>fg :<C-u>UniteResume grep<CR>
 nnoremap <leader>r :<C-u>Unite -buffer-name=files -start-insert file_rec/async:<c-r>=GetProjectDir()<cr><CR>
 let g:unite_source_history_yank_enable = 1
 nnoremap <leader>y :<C-u>Unite history/yank<cr>
-nnoremap <leader>ss :<C-u>UniteSessionSave
-nnoremap <leader>sr :<C-u>Unite -buffer-name=sessions session
-let g:unite_source_session_enable_auto_save = 1
-let g:unite_source_file_mru_limit = 1000
 let g:unite_cursor_line_highlight = 'TabLineSel'
 
 autocmd FileType unite call s:unite_settings()
@@ -317,17 +308,13 @@ endfunction
 
 nmap <leader>gw :Gwrite<cr>
 nmap <leader>gc :Gcommit<cr>
+nmap <leader>gd :Gdiff<cr>
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd User fugitive
   \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
-
-nmap <leader>a= :Tabularize /=<cr>
-vmap <leader>a= :Tabularize /=<cr>
-nmap <leader>a; :Tabularize /:\zs<cr>
-vmap <leader>a; :Tabularize /:\zs<cr>
 
 set undodir^=~/.vim/undo
 set undofile
@@ -362,6 +349,7 @@ endfunction
 au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
 
 silent! colorscheme solarized
+highlight clear SignColumn
 
 function! MyWS()
   if !hlexists('ExtraWhitespace')
@@ -383,6 +371,26 @@ if executable('ag')
   let g:unite_source_grep_recursive_opt = ''
 endif
 
+function! DelTagOfFile(file)
+  let fullpath = a:file
+  let cwd = getcwd()
+  let tagfilename = cwd . "/tags"
+  let f = substitute(fullpath, cwd . "/", "", "")
+  let f = escape(f, './')
+  let cmd = 'sed -i "/' . f . '/d" "' . tagfilename . '"'
+  let resp = system(cmd)
+endfunction
+
+function! UpdateTags()
+  let f = expand("%:p")
+  let cwd = getcwd()
+  let tagfilename = cwd . "/tags"
+  let cmd = 'ctags -a -f ' . tagfilename . ' --c++-kinds=+p --fields=+iaS --extra=+q ' . '"' . f . '"'
+  call DelTagOfFile(f)
+  let resp = system(cmd)
+endfunction
+autocmd BufWritePost *.cpp,*.h,*.c call UpdateTags()
+
 " Vim. Live it. ------------------------------------------------------- {{{
 nnoremap <up> <nop>
 nnoremap <down> <nop>
@@ -399,3 +407,10 @@ noremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$' : 'g_')
 vnoremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$h' : 'g_')
 imap <Home> <C-o><Home>
 imap <End> <C-o><End>
+
+" ----------------------------------------------------------------------------
+" fzf
+" ----------------------------------------------------------------------------
+set rtp+=/usr/local/opt/fzf
+let g:fzf_launcher = "vim_iterm_function %s"
+nnoremap <silent> <Leader>ff :FZF -m<CR>
