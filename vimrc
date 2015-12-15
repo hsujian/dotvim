@@ -38,6 +38,7 @@ Plugin 'scrooloose/syntastic'
 Plugin 'a.vim'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'sjl/gundo.vim'
+Plugin 'airblade/vim-rooter'
 
 if has('lua')
 let g:neocomplete#enable_at_startup = 1
@@ -62,6 +63,7 @@ Plugin 'jelera/vim-javascript-syntax'
 Plugin 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
 Plugin 'digitaltoad/vim-jade'
+Plugin 'wavded/vim-stylus'
 Plugin 'posva/vim-vue'
 
 let g:go_fmt_command = "goimports"
@@ -121,7 +123,6 @@ augroup MyAutoCmd
 augroup END
 
 set autowriteall
-set autochdir
 set wildmode=list:longest,full
 set wildignore=*.o,*.obj,*~
 set wildignore+=*DS_Store*
@@ -286,7 +287,12 @@ silent! call unite#custom#source('file_rec/async', 'converters', [])
 silent! call unite#custom#source('file_rec/async', 'sorters', [])
 silent! call unite#custom#source('file_rec/async', 'max_candidates', 10)
 
-nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer file_mru bookmark file_rec/git<cr>
+function! UniteGetSource()
+  return exists('b:git_dir') ? "file_rec/git" : "file_rec/async:!"
+endfunction
+
+nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer <c-r>=UniteGetSource()<cr><CR>
+
 let g:unite_source_grep_default_opts = '-iRHn --binary-files=without-match'
 nnoremap <leader>fg :<C-u>UniteWithCursorWord -buffer-name=grep -auto-highlight grep:<c-r>=GetProjectDir()<cr><CR>
 vnoremap <leader>fg "zy:<C-u>Unite -no-start-insert -auto-highlight grep:<c-r>=GetProjectDir()<cr>::<C-R>z<CR>
@@ -309,10 +315,6 @@ function! s:unite_settings()
   nmap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
   nmap <buffer> <ESC> <Plug>(unite_exit)
 endfunction
-
-nmap <leader>gw :Gwrite<cr>
-nmap <leader>gc :Gcommit<cr>
-nmap <leader>gd :Gdiff<cr>
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd User fugitive
