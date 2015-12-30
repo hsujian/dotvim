@@ -291,13 +291,12 @@ function! UniteGetSource()
   return exists('b:git_dir') ? "file_rec/git" : "file_rec/async:!"
 endfunction
 
-nnoremap <C-p> :<C-u>Unite -buffer-name=files -start-insert buffer <c-r>=UniteGetSource()<cr><CR>
+nnoremap <C-p> :<C-u>Unite -auto-resize -buffer-name=files -start-insert buffer <c-r>=UniteGetSource()<cr><CR>
 
 let g:unite_source_grep_default_opts = '-iRHn --binary-files=without-match'
 nnoremap <leader>fg :<C-u>UniteWithCursorWord -buffer-name=grep -auto-highlight grep:<c-r>=GetProjectDir()<cr><CR>
 vnoremap <leader>fg "zy:<C-u>Unite -no-start-insert -auto-highlight grep:<c-r>=GetProjectDir()<cr>::<C-R>z<CR>
 nnoremap <leader><leader>fg :<C-u>UniteResume grep<CR>
-nnoremap <leader>r :<C-u>Unite -buffer-name=files -start-insert file_rec/async:<c-r>=GetProjectDir()<cr><CR>
 let g:unite_source_history_yank_enable = 1
 nnoremap <leader>y :<C-u>Unite history/yank<cr>
 let g:unite_cursor_line_highlight = 'TabLineSel'
