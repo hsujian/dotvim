@@ -307,11 +307,11 @@ function! s:unite_settings()
   imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
   imap <silent><buffer><expr> <C-x> unite#do_action('split')
   imap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-  imap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
+  imap <silent><buffer><expr> <C-t> unite#do_action('tabswitch')
 
   nmap <silent><buffer><expr> <C-x> unite#do_action('split')
   nmap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-  nmap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
+  nmap <silent><buffer><expr> <C-t> unite#do_action('tabswitch')
   nmap <buffer> <ESC> <Plug>(unite_exit)
 endfunction
 
