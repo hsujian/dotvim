@@ -7,64 +7,61 @@ endif
 
 set nocompatible
 " Plugins " {{{
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#begin()
-Plugin 'gmarik/vundle'
+call plug#begin('~/.vim/plugged')
 
-Plugin 'tpope/vim-sensible'
+Plug 'tpope/vim-sensible'
 let g:AutoPairsShortcutFastWrap = '<C-S-e>'
-Plugin 'jiangmiao/auto-pairs'
+Plug 'jiangmiao/auto-pairs'
 
-Plugin 'Shougo/vimproc.vim'
-Plugin 'Shougo/unite.vim'
-Plugin 'Shougo/neomru.vim'
+Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+Plug 'Shougo/unite.vim'
+Plug 'Shougo/neomru.vim'
 
 let NERDTreeChDirMode=2
-Plugin 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
 
-Plugin 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdcommenter'
 
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'editorconfig/editorconfig-vim'
+Plug 'altercation/vim-colors-solarized'
+Plug 'editorconfig/editorconfig-vim'
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-Plugin 'scrooloose/syntastic'
-Plugin 'a.vim'
-Plugin 'Lokaltog/vim-easymotion'
-Plugin 'sjl/gundo.vim'
-Plugin 'airblade/vim-rooter'
+Plug 'scrooloose/syntastic'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'sjl/gundo.vim'
+Plug 'airblade/vim-rooter'
 
 if has('lua')
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
-Plugin 'Shougo/neocomplete.vim'
+Plug 'Shougo/neocomplete.vim'
 endif
+Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-Plugin 'SirVer/ultisnips'
-"Plugin 'terryma/vim-multiple-cursors'
-Plugin 'joedicastro/vim-multiple-cursors'
+Plug 'SirVer/ultisnips'
+"Plug 'terryma/vim-multiple-cursors'
+Plug 'joedicastro/vim-multiple-cursors'
 
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
-Plugin 'airblade/vim-gitgutter'
-Plugin 'bling/vim-airline'
+Plug 'airblade/vim-gitgutter'
+Plug 'bling/vim-airline'
 
-Plugin 'tpope/vim-markdown'
-Plugin 'jelera/vim-javascript-syntax'
-Plugin 'kchmck/vim-coffee-script'
+Plug 'tpope/vim-markdown'
+Plug 'jelera/vim-javascript-syntax'
+Plug 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
-Plugin 'digitaltoad/vim-jade'
-Plugin 'wavded/vim-stylus'
-Plugin 'posva/vim-vue'
+Plug 'digitaltoad/vim-jade'
+Plug 'wavded/vim-stylus'
+Plug 'posva/vim-vue'
 
 let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
@@ -72,9 +69,12 @@ let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
-Plugin 'fatih/vim-go'
+Plug 'fatih/vim-go'
 
-call vundle#end()
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+call plug#end()
+
 filetype plugin indent on
 syntax on
 " " }}}
@@ -416,6 +416,5 @@ imap <End> <C-o><End>
 " ----------------------------------------------------------------------------
 " fzf
 " ----------------------------------------------------------------------------
-set rtp+=/usr/local/opt/fzf
 let g:fzf_launcher = "vim_iterm_function %s"
 nnoremap <silent> <Leader>ff :FZF -m<CR>
