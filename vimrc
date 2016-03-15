@@ -26,6 +26,7 @@ Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdcommenter'
 
 Plug 'altercation/vim-colors-solarized'
+let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 Plug 'editorconfig/editorconfig-vim'
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -56,7 +57,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'bling/vim-airline'
 
 Plug 'tpope/vim-markdown'
-Plug 'jelera/vim-javascript-syntax'
+Plug 'othree/yajs.vim'
 Plug 'kchmck/vim-coffee-script'
 let coffee_watch_vert = 1
 Plug 'digitaltoad/vim-jade'
