@@ -32,6 +32,7 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+let g:syntastic_javascript_checkers = ['eslint']
 Plug 'scrooloose/syntastic'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'sjl/gundo.vim'
@@ -40,6 +41,7 @@ Plug 'airblade/vim-rooter'
 if has('lua')
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
+set completeopt-=preview
 Plug 'Shougo/neocomplete.vim'
 endif
 Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
@@ -48,8 +50,7 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 Plug 'SirVer/ultisnips'
-"Plug 'terryma/vim-multiple-cursors'
-Plug 'joedicastro/vim-multiple-cursors'
+Plug 'terryma/vim-multiple-cursors'
 
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
@@ -58,11 +59,12 @@ Plug 'bling/vim-airline'
 
 Plug 'tpope/vim-markdown'
 Plug 'othree/yajs.vim'
-Plug 'kchmck/vim-coffee-script'
-let coffee_watch_vert = 1
-Plug 'digitaltoad/vim-jade'
 Plug 'wavded/vim-stylus'
 Plug 'posva/vim-vue'
+
+let g:Omnisharp_stop_server = 0
+let g:OmniSharp_selector_ui = 'unite'
+Plug 'OmniSharp/omnisharp-vim'
 
 let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
@@ -207,9 +209,11 @@ if has("autocmd")
   au FocusLost * silent! wa
 
   autocmd FileType markdown set sw=4 sts=4 ts=4 noet
-  autocmd FileType c,cpp,Makefile set sw=4 sts=4 ts=4 noet
+  autocmd FileType make,Makefile set sw=4 sts=4 ts=4 noet
+  autocmd FileType c,cpp set sw=4 sts=4 ts=4 noet
   autocmd filetype svn,*commit* setlocal spell
   autocmd BufReadPost * call SetCursorPosition()
+  autocmd BufReadPost post-receive set ft=sh
 
   nnoremap <leader><F1> :tabe $MYVIMRC<cr>
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
@@ -336,6 +340,44 @@ augroup MyAutoCmd
   " autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
 augroup END
 
+augroup omnisharp_commands
+  autocmd!
+
+  "Set autocomplete function to OmniSharp (if not using YouCompleteMe completion plugin)
+  autocmd FileType cs setlocal omnifunc=OmniSharp#Complete
+
+  " Synchronous build (blocks Vim)
+  "autocmd FileType cs nnoremap <F5> :wa!<cr>:OmniSharpBuild<cr>
+  " Builds can also run asynchronously with vim-dispatch installed
+  autocmd FileType cs nnoremap <leader>b :wa!<cr>:OmniSharpBuildAsync<cr>
+
+  " Automatically add new cs files to the nearest project on save
+  autocmd BufWritePost *.cs call OmniSharp#AddToProject()
+
+  "show type information automatically when the cursor stops moving
+  autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
+
+  "The following commands are contextual, based on the current cursor position.
+
+  autocmd FileType cs nnoremap gd :OmniSharpGotoDefinition<cr>
+  autocmd FileType cs nnoremap <leader>fi :OmniSharpFindImplementations<cr>
+  autocmd FileType cs nnoremap <leader>ft :OmniSharpFindType<cr>
+  autocmd FileType cs nnoremap <leader>fs :OmniSharpFindSymbol<cr>
+  autocmd FileType cs nnoremap <leader>fu :OmniSharpFindUsages<cr>
+  "finds members in the current buffer
+  autocmd FileType cs nnoremap <leader>fm :OmniSharpFindMembers<cr>
+  " cursor can be anywhere on the line containing an issue
+  autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>
+  autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
+  autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
+  autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
+  "navigate up by method/property/field
+  autocmd FileType cs nnoremap <C-K> :OmniSharpNavigateUp<cr>
+  "navigate down by method/property/field
+  autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr>
+
+augroup END
+
 " Make UltiSnips works nicely with other sugg plugin
 function! g:UltiSnips_Complete()
     call UltiSnips#ExpandSnippet()
@@ -395,7 +437,7 @@ function! UpdateTags()
   call DelTagOfFile(f)
   let resp = system(cmd)
 endfunction
-autocmd BufWritePost *.cpp,*.h,*.c call UpdateTags()
+"autocmd BufWritePost *.cpp,*.h,*.c call UpdateTags()
 
 " Vim. Live it. ------------------------------------------------------- {{{
 nnoremap <up> <nop>
