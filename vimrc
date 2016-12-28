@@ -33,6 +33,7 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_loc_list_height = 3
 Plug 'scrooloose/syntastic'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'sjl/gundo.vim'
@@ -105,8 +106,8 @@ syntax sync minlines=256
 set cmdheight=2
 set sessionoptions-=help
 set sessionoptions-=options
-"set list
-map <silent> <F11> :set invlist<CR>
+set list
+map <silent> <C-F11> :set invlist<CR>
 set mat=2
 set splitright
 set splitbelow
