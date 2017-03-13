@@ -18,7 +18,12 @@ Plug 'Shougo/unite.vim'
 Plug 'Shougo/neomru.vim'
 
 let NERDTreeChDirMode=2
+let g:nerdtree_tabs_open_on_console_startup=1
+let NERDTreeIgnore=['\.pyc','\~$','\.swp']
+let NERDTreeShowBookmarks=1
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
+Plug 'jistr/vim-nerdtree-tabs', { 'on': 'NERDTreeToggle' }
 
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
@@ -71,7 +76,9 @@ let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 Plug 'fatih/vim-go'
 
+let g:fzf_buffers_jump = 1
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
 call plug#end()
 
@@ -86,9 +93,6 @@ set ignorecase
 set wrap
 set linebreak
 
-set shiftwidth=2
-set softtabstop=2
-set tabstop=2
 set foldmethod=indent
 set nofoldenable
 set formatoptions-=o
@@ -106,7 +110,7 @@ syntax sync minlines=256
 set cmdheight=2
 set sessionoptions-=help
 set sessionoptions-=options
-set list
+"set list
 map <silent> <C-F11> :set invlist<CR>
 set mat=2
 set splitright
@@ -260,6 +264,9 @@ noremap <silent><F1> :call My_buf_switch()<CR>
 imap <F1> <C-o><F1>
 " switch end
 
+"nmap <leader><tab> <plug>(fzf-maps-n)
+"xmap <leader><tab> <plug>(fzf-maps-x)
+"omap <leader><tab> <plug>(fzf-maps-o)
 nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 
 "let g:unite_enable_start_insert = 1
@@ -369,13 +376,12 @@ au Syntax * if empty(&buftype) && &modifiable | call MyWS() | endif
 set tw=78
 set colorcolumn=+1
 
-if executable('ag')
-  set grepprg=ag\ -S\ --nogroup\ --nocolor
-  let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts =
-        \ '--line-numbers --nocolor --nogroup --hidden --ignore ' .
-        \  '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
+if executable('pt')
+  set grepprg=pt\ -S\ --nogroup\ --nocolor\ -C\ 0
+  let g:unite_source_grep_command = 'pt'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor -C 0'
   let g:unite_source_grep_recursive_opt = ''
+  let g:unite_source_grep_encoding = 'utf-8'
 endif
 
 function! DelTagOfFile(file)
@@ -420,3 +426,5 @@ imap <End> <C-o><End>
 " ----------------------------------------------------------------------------
 let g:fzf_launcher = "vim_iterm_function %s"
 nnoremap <silent> <Leader>ff :FZF -m<CR>
+
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
