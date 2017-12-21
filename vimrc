@@ -80,6 +80,7 @@ let g:fzf_buffers_jump = 1
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
+Plug 'tell-k/vim-autopep8'
 call plug#end()
 
 filetype plugin indent on
@@ -97,7 +98,9 @@ set foldmethod=indent
 set nofoldenable
 set formatoptions-=o
 set mouse=a
+if !has('nvim')
 set ttymouse=xterm2
+end
 set hidden
 set pastetoggle=<F7>
 set completeopt=longest,menu
@@ -209,12 +212,13 @@ if has("autocmd")
   au FileChangedShell * Warn "File has been changed outside of Vim."
   au FocusLost * silent! wa
 
-  autocmd FileType markdown set sw=4 sts=4 ts=4 noet
-  autocmd FileType make,Makefile set sw=4 sts=4 ts=4 noet
-  autocmd FileType c,cpp set sw=4 sts=4 ts=4 noet
-  autocmd filetype svn,*commit* setlocal spell
+  autocmd FileType markdown setl sw=4 sts=4 ts=4 noet
+  autocmd FileType make,Makefile setl sw=4 sts=4 ts=4 noet
+  autocmd FileType c,cpp setl sw=4 sts=4 ts=4 noet
+  autocmd FileType yml,yaml setl sw=2 sts=2 ts=2 et indentkeys-=<:>
+  autocmd filetype svn,*commit* setl spell
   autocmd BufReadPost * call SetCursorPosition()
-  autocmd BufReadPost post-receive set ft=sh
+  autocmd BufReadPost post-receive setl ft=sh
 
   nnoremap <leader><F1> :tabe $MYVIMRC<cr>
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
