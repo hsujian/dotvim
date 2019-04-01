@@ -13,9 +13,14 @@ Plug 'tpope/vim-sensible'
 let g:AutoPairsShortcutFastWrap = '<C-S-e>'
 Plug 'jiangmiao/auto-pairs'
 
-Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-Plug 'Shougo/unite.vim'
+Plug 'Shougo/denite.nvim'
 Plug 'Shougo/neomru.vim'
+Plug 'raghur/fruzzy', {'do': { -> fruzzy#install() }}
+let g:gundo_prefer_python3 = 1
+Plug 'Shougo/deoplete.nvim'
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
+let g:deoplete#enable_at_startup = 1
 
 let NERDTreeChDirMode=2
 let g:nerdtree_tabs_open_on_console_startup=1
@@ -44,19 +49,12 @@ Plug 'Lokaltog/vim-easymotion'
 Plug 'sjl/gundo.vim'
 Plug 'airblade/vim-rooter'
 
-if has('lua')
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
-set completeopt-=preview
-Plug 'Shougo/neocomplete.vim'
-endif
 Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 Plug 'SirVer/ultisnips'
-Plug 'terryma/vim-multiple-cursors'
 
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
@@ -67,6 +65,9 @@ Plug 'tpope/vim-markdown'
 Plug 'othree/yajs.vim'
 Plug 'wavded/vim-stylus'
 Plug 'posva/vim-vue'
+Plug 'keith/swift.vim'
+Plug 'dart-lang/dart-vim-plugin'
+Plug 'jparise/vim-graphql'
 
 let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
@@ -80,8 +81,12 @@ let g:fzf_buffers_jump = 1
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
-Plug 'tell-k/vim-autopep8'
 call plug#end()
+
+let g:fruzzy#usenative = 1
+if exists('g:loaded_denite')
+  call denite#custom#source('_', 'matchers', ['matcher/fruzzy', 'matcher/project_files'])
+end
 
 filetype plugin indent on
 syntax on
@@ -104,6 +109,7 @@ end
 set hidden
 set pastetoggle=<F7>
 set completeopt=longest,menu
+set completeopt-=preview
 set lazyredraw
 set si
 set encoding=utf-8
@@ -147,6 +153,31 @@ if exists('$TMUX')
 else
   let &t_SI = "\<Esc>]50;CursorShape=1\x7"
   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+
+if exists('$TMUX')
+  function! TmuxOrSplitSwitch(wincmd, tmuxdir)
+    let previous_winnr = winnr()
+    silent! execute "wincmd " . a:wincmd
+    if previous_winnr == winnr()
+      call system("tmux select-pane -" . a:tmuxdir)
+      redraw!
+    endif
+  endfunction
+
+  let previous_title = substitute(system("tmux display-message -p '#{pane_title}'"), '\n', '', '')
+  let &t_ti = "\<Esc>]2;vim\<Esc>\\" . &t_ti
+  let &t_te = "\<Esc>]2;". previous_title . "\<Esc>\\" . &t_te
+
+  nnoremap <silent> <C-h> :call TmuxOrSplitSwitch('h', 'L')<cr>
+  nnoremap <silent> <C-j> :call TmuxOrSplitSwitch('j', 'D')<cr>
+  nnoremap <silent> <C-k> :call TmuxOrSplitSwitch('k', 'U')<cr>
+  nnoremap <silent> <C-l> :call TmuxOrSplitSwitch('l', 'R')<cr>
+else
+  map <C-h> <C-w>h
+  map <C-j> <C-w>j
+  map <C-k> <C-w>k
+  map <C-l> <C-w>l
 endif
 
 function! GetProjectDir(...)
@@ -216,11 +247,11 @@ if has("autocmd")
   autocmd FileType make,Makefile setl sw=4 sts=4 ts=4 noet
   autocmd FileType c,cpp setl sw=4 sts=4 ts=4 noet
   autocmd FileType yml,yaml setl sw=2 sts=2 ts=2 et indentkeys-=<:>
+  autocmd FileType dart setl sw=2 sts=2 ts=2 et
   autocmd filetype svn,*commit* setl spell
   autocmd BufReadPost * call SetCursorPosition()
   autocmd BufReadPost post-receive setl ft=sh
 
-  nnoremap <leader><F1> :tabe $MYVIMRC<cr>
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
   augroup END
 
@@ -242,8 +273,8 @@ function! My_buf_switch()
   if bufnr('$') == 2
     b#
   elseif bufnr('$') > 2
-    if exists('g:loaded_unite')
-      Unite -start-insert buffer bookmark
+    if exists('g:loaded_denite')
+      denite -start-insert buffer bookmark
     else
       buffers
       let select_buf_nr = input("Enter buffer number: ")
@@ -264,7 +295,8 @@ endfunction
 autocmd TabLeave * let g:previous_tab = tabpagenr()
 noremap <silent><F2> :call My_tb_switch()<CR>
 imap <F2> <C-o><F2>
-noremap <silent><F1> :call My_buf_switch()<CR>
+"noremap <silent><F1> :call My_buf_switch()<CR>
+noremap <silent><F1> :bp<CR>
 imap <F1> <C-o><F1>
 " switch end
 
@@ -273,60 +305,33 @@ imap <F1> <C-o><F1>
 "omap <leader><tab> <plug>(fzf-maps-o)
 nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 
-"let g:unite_enable_start_insert = 1
-"let g:unite_force_overwrite_statusline = 0
-let g:unite_source_rec_max_cache_files = 0
-let g:unite_winheight = 10
-silent! call unite#filters#matcher_default#use(['matcher_fuzzy'])
-silent! call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
-      \ 'ignore_pattern', join([
-      \ '\.git/',
-      \ '\.hg/',
-      \ '\.svn/',
-      \ '\.gz',
-      \ '\.jpg',
-      \ '\.so',
-      \ '\.swp',
-      \ '\.png',
-      \ '\.gif',
-      \ 'tmp/',
-      \ 'temp/',
-      \ '.tmp/',
-      \ 'cache',
-      \ '.sass-cache',
-      \ ], '\|'))
-
-silent! call unite#custom#source('file_rec/async', 'converters', [])
-silent! call unite#custom#source('file_rec/async', 'sorters', [])
-silent! call unite#custom#source('file_rec/async', 'max_candidates', 10)
-
 function! UniteGetSource()
   return exists('b:git_dir') ? "file_rec/git" : "file_rec/async:!"
 endfunction
 
-nnoremap <C-p> :<C-u>Unite -auto-resize -buffer-name=files -start-insert buffer <c-r>=UniteGetSource()<cr><CR>
+call denite#custom#var('file/rec', 'command',
+      \ ['rg', '--files', '--glob', '!.git'])
+call denite#custom#map(
+      \ 'insert',
+      \ '<C-j>',
+      \ '<denite:move_to_next_line>',
+      \ 'noremap'
+      \)
+call denite#custom#map(
+      \ 'insert',
+      \ '<C-k>',
+      \ '<denite:move_to_previous_line>',
+      \ 'noremap'
+      \)
 
-let g:unite_source_grep_default_opts = '-iRHn --binary-files=without-match'
-nnoremap <leader>fg :<C-u>UniteWithCursorWord -buffer-name=grep -auto-highlight grep:<c-r>=GetProjectDir()<cr><CR>
-vnoremap <leader>fg "zy:<C-u>Unite -no-start-insert -auto-highlight grep:<c-r>=GetProjectDir()<cr>::<C-R>z<CR>
-nnoremap <leader><leader>fg :<C-u>UniteResume grep<CR>
-let g:unite_source_history_yank_enable = 1
-nnoremap <leader>y :<C-u>Unite history/yank<cr>
-let g:unite_cursor_line_highlight = 'TabLineSel'
+call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+call denite#custom#var('file/rec/git', 'command',
+      \ ['git', 'ls-files', '-co', '--exclude-standard'])
+nnoremap <silent> <C-p> :<C-u>Denite
+      \ `finddir('.git', ';') != '' ? 'file/rec/git' : 'file/rec'`<CR>
 
-autocmd FileType unite call s:unite_settings()
-function! s:unite_settings()
-  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
-  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
-  imap <silent><buffer><expr> <C-x> unite#do_action('split')
-  imap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-  imap <silent><buffer><expr> <C-t> unite#do_action('tabswitch')
-
-  nmap <silent><buffer><expr> <C-x> unite#do_action('split')
-  nmap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-  nmap <silent><buffer><expr> <C-t> unite#do_action('tabswitch')
-  nmap <buffer> <ESC> <Plug>(unite_exit)
-endfunction
+nnoremap <leader>fg :<C-u>DeniteCursorWord -buffer-name=grep -auto-highlight grep:<c-r>=GetProjectDir()<cr><CR>
+vnoremap <leader>fg "zy:<C-u>Denite -no-start-insert -auto-highlight grep:<c-r>=GetProjectDir()<cr>::<C-R>z<CR>
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd User fugitive
@@ -380,12 +385,15 @@ au Syntax * if empty(&buftype) && &modifiable | call MyWS() | endif
 set tw=78
 set colorcolumn=+1
 
-if executable('pt')
-  set grepprg=pt\ -S\ --nogroup\ --nocolor\ -C\ 0
-  let g:unite_source_grep_command = 'pt'
-  let g:unite_source_grep_default_opts = '--nogroup --nocolor -C 0'
-  let g:unite_source_grep_recursive_opt = ''
-  let g:unite_source_grep_encoding = 'utf-8'
+if executable('rg')
+  set grepprg=rg\ -S\ --vimgrep
+  call denite#custom#var('grep', 'command', ['rg'])
+  call denite#custom#var('grep', 'default_opts',
+        \ ['-i', '--vimgrep', '--no-heading'])
+  call denite#custom#var('grep', 'recursive_opts', [])
+  call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
+  call denite#custom#var('grep', 'separator', ['--'])
+  call denite#custom#var('grep', 'final_opts', [])
 endif
 
 function! DelTagOfFile(file)
