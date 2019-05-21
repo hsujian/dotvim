@@ -18,9 +18,12 @@ Plug 'Shougo/neomru.vim'
 Plug 'raghur/fruzzy', {'do': { -> fruzzy#install() }}
 let g:gundo_prefer_python3 = 1
 Plug 'Shougo/deoplete.nvim'
+Plug 'deoplete-plugins/deoplete-go', { 'do': 'make' }
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 let g:deoplete#enable_at_startup = 1
+let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
+let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
 
 let NERDTreeChDirMode=2
 let g:nerdtree_tabs_open_on_console_startup=1
@@ -54,7 +57,9 @@ Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' 
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsEditSplit="vertical"
 Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
