@@ -13,17 +13,7 @@ Plug 'tpope/vim-sensible'
 let g:AutoPairsShortcutFastWrap = '<C-S-e>'
 Plug 'jiangmiao/auto-pairs'
 
-Plug 'Shougo/denite.nvim'
-Plug 'Shougo/neomru.vim'
-Plug 'raghur/fruzzy', {'do': { -> fruzzy#install() }}
-let g:gundo_prefer_python3 = 1
-Plug 'Shougo/deoplete.nvim'
-Plug 'deoplete-plugins/deoplete-go', { 'do': 'make' }
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
-let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 
 let NERDTreeChDirMode=2
 let g:nerdtree_tabs_open_on_console_startup=1
@@ -49,6 +39,8 @@ let g:syntastic_javascript_checkers = ['eslint']
 let g:syntastic_loc_list_height = 3
 Plug 'scrooloose/syntastic'
 Plug 'Lokaltog/vim-easymotion'
+
+let g:gundo_prefer_python3 = 1
 Plug 'sjl/gundo.vim'
 Plug 'airblade/vim-rooter'
 
@@ -64,7 +56,10 @@ Plug 'honza/vim-snippets'
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
 Plug 'airblade/vim-gitgutter'
-Plug 'bling/vim-airline'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 Plug 'tpope/vim-markdown'
 Plug 'othree/yajs.vim'
@@ -87,11 +82,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 call plug#end()
-
-let g:fruzzy#usenative = 1
-if exists('g:loaded_denite')
-  call denite#custom#source('_', 'matchers', ['matcher/fruzzy', 'matcher/project_files'])
-end
 
 filetype plugin indent on
 syntax on
@@ -310,34 +300,6 @@ imap <F1> <C-o><F1>
 "omap <leader><tab> <plug>(fzf-maps-o)
 nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 
-function! UniteGetSource()
-  return exists('b:git_dir') ? "file_rec/git" : "file_rec/async:!"
-endfunction
-
-call denite#custom#var('file/rec', 'command',
-      \ ['rg', '--files', '--glob', '!.git'])
-call denite#custom#map(
-      \ 'insert',
-      \ '<C-j>',
-      \ '<denite:move_to_next_line>',
-      \ 'noremap'
-      \)
-call denite#custom#map(
-      \ 'insert',
-      \ '<C-k>',
-      \ '<denite:move_to_previous_line>',
-      \ 'noremap'
-      \)
-
-call denite#custom#alias('source', 'file/rec/git', 'file/rec')
-call denite#custom#var('file/rec/git', 'command',
-      \ ['git', 'ls-files', '-co', '--exclude-standard'])
-nnoremap <silent> <C-p> :<C-u>Denite
-      \ `finddir('.git', ';') != '' ? 'file/rec/git' : 'file/rec'`<CR>
-
-nnoremap <leader>fg :<C-u>DeniteCursorWord -buffer-name=grep -auto-highlight grep:<c-r>=GetProjectDir()<cr><CR>
-vnoremap <leader>fg "zy:<C-u>Denite -no-start-insert -auto-highlight grep:<c-r>=GetProjectDir()<cr>::<C-R>z<CR>
-
 autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd User fugitive
   \ if get(b:, 'fugitive_type', '') =~# '^\%(tree\|blob\)$' |
@@ -392,13 +354,6 @@ set colorcolumn=+1
 
 if executable('rg')
   set grepprg=rg\ -S\ --vimgrep
-  call denite#custom#var('grep', 'command', ['rg'])
-  call denite#custom#var('grep', 'default_opts',
-        \ ['-i', '--vimgrep', '--no-heading'])
-  call denite#custom#var('grep', 'recursive_opts', [])
-  call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
-  call denite#custom#var('grep', 'separator', ['--'])
-  call denite#custom#var('grep', 'final_opts', [])
 endif
 
 function! DelTagOfFile(file)
