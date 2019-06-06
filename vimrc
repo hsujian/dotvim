@@ -120,16 +120,8 @@ map <silent> <C-F11> :set invlist<CR>
 set mat=2
 set splitright
 set splitbelow
-try
-  set switchbuf=useopen,usetab,newtab
-catch
-endtry
 nnoremap <F3> :cn<cr>
 nnoremap <S-F3> :cp<cr>
-
-augroup MyAutoCmd
-  autocmd!
-augroup END
 
 set autowriteall
 set wildmode=list:longest,full
@@ -194,12 +186,6 @@ function! GetProjectDir(...)
     return getcwd()
   endif
   return a:1
-endf
-
-function! LoadCscope(git_dir)
-  if filereadable(a:git_dir . '/cscope.out')
-    execute 'cs add ' . a:git_dir . '/cscope.out ' . a:git_dir . '/../'
-  endif
 endf
 
 "visual search mappings
@@ -307,6 +293,7 @@ set undofile
 nnoremap <leader>u :GundoToggle<cr>
 
 augroup MyAutoCmd
+  autocmd!
   autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
   autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
   autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
@@ -394,7 +381,9 @@ nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 " ----------------------------------------------------------------------------
 " fzf
 " ----------------------------------------------------------------------------
-nnoremap <silent> <Leader>ff :FZF -m<CR>
+nnoremap <silent> <C-p> :FZF -m<CR>
+let g:rg_command = 'rg --column --line-number --no-heading --color=always --smart-case '
+nnoremap <silent> <Leader>fg :call fzf#vim#grep(g:rg_command . shellescape(expand("<cword>")), 1)<CR>
 
 "nmap <leader><tab> <plug>(fzf-maps-n)
 "xmap <leader><tab> <plug>(fzf-maps-x)
