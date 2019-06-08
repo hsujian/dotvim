@@ -382,6 +382,7 @@ imap <End> <C-o><End>
 
 nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
 
+vmap <C-c> "+y
 " 映射切换buffer的键位
 nnoremap [b :bp<CR>
 nnoremap ]b :bn<CR>
