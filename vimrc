@@ -386,7 +386,6 @@ vmap <C-c> "+y
 " 映射切换buffer的键位
 nnoremap [b :bp<CR>
 nnoremap ]b :bn<CR>
-set guifont=Powerline_Consolas:h14:cANSI
 
 " ----------------------------------------------------------------------------
 " fzf
