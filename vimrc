@@ -57,6 +57,7 @@ let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
 Plug 'airblade/vim-gitgutter'
 let g:airline_powerline_fonts = 1
+let g:airline_theme="dark"
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 let g:airline#extensions#tabline#left_sep = ' '   "tabline中未激活buffer两端的分隔字符
