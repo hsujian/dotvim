@@ -17,6 +17,7 @@ augroup END
 au FocusGained * set guitablabel=%M%N\ %t
 
 if has("gui_macvim")
+  let g:airline#extensions#tabline#enabled = 0
   set guifont=Monaco:h16
   nnoremap <D-1> 1gt
   imap <D-1> <C-o><D-1>

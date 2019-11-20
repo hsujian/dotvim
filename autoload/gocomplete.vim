@@ -1,1 +1,1 @@
-/home/xudejian/.vim/plugged/gocode/vim/autoload/gocomplete.vim
+/Users/xudejian/.vim/plugged/gocode/vim/autoload/gocomplete.vim
