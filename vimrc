@@ -10,9 +10,6 @@ set nocompatible
 call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-sensible'
-"let g:AutoPairsShortcutFastWrap = '<C-S-e>'
-"Plug 'jiangmiao/auto-pairs'
-
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 
 let NERDTreeChDirMode=2
@@ -31,14 +28,6 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'altercation/vim-colors-solarized'
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 Plug 'editorconfig/editorconfig-vim'
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_loc_list_height = 3
-Plug 'scrooloose/syntastic'
-Plug 'Lokaltog/vim-easymotion'
 
 let g:gundo_prefer_python3 = 1
 Plug 'sjl/gundo.vim'
@@ -224,7 +213,6 @@ if has("autocmd")
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
   au FocusLost * silent! wa
-  autocmd CursorHold * silent call CocActionAsync('highlight')
 
   autocmd FileType markdown setl sw=4 sts=4 ts=4 noet
   autocmd FileType make,Makefile setl sw=4 sts=4 ts=4 noet
@@ -436,7 +424,7 @@ function! s:show_documentation()
 endfunction
 
 " Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
+"autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Remap for rename current word
 nmap <leader>rn <Plug>(coc-rename)
