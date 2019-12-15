@@ -1,9 +1,7 @@
 dotvim
 ======
 
-my .vim
-
-dotvim is my own vim setting. It comes bundled with a ton of helpful functions, helpers, plugins, themes, and few things that make you shout...
+dotvim is my own vim setting.
 
 ##Setup
 
