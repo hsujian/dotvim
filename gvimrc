@@ -5,6 +5,7 @@ set guioptions-=r
 set guioptions-=L
 set mouse=a
 set ttymouse=xterm2
+set switchbuf=usetab,newtab
 
 augroup gvimrcEx
   au!
@@ -18,7 +19,8 @@ au FocusGained * set guitablabel=%M%N\ %t
 
 if has("gui_macvim")
   let g:airline#extensions#tabline#enabled = 0
-  set guifont=Monaco:h16
+  "set guifont=Monaco:h16
+  set guifont=Cascadia\ Code\ PL:h16
   nnoremap <D-1> 1gt
   imap <D-1> <C-o><D-1>
   nnoremap <D-2> 2gt

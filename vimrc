@@ -10,7 +10,7 @@ set nocompatible
 call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-sensible'
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 let NERDTreeChDirMode=2
 let g:nerdtree_tabs_open_on_console_startup=1
@@ -113,6 +113,7 @@ nnoremap <F3> :cn<cr>
 nnoremap <S-F3> :cp<cr>
 
 set autowriteall
+set path+=**
 set wildmode=list:longest,full
 set wildignore=*.o,*.obj,*~
 set wildignore+=*DS_Store*
@@ -206,7 +207,7 @@ if has("autocmd")
   au!
 
   set iminsert=0
-  set imsearch=0
+  set imsearch=-1
   set imd
   au InsertLeave,FocusGained * set imd imi=0
   au InsertEnter * set imd imi=0
@@ -214,7 +215,9 @@ if has("autocmd")
   au FileChangedShell * Warn "File has been changed outside of Vim."
   au FocusLost * silent! wa
 
-  autocmd FileType markdown setl sw=4 sts=4 ts=4 noet
+  autocmd FileType markdown setl sw=4 sts=4 ts=4 noet nonu
+  autocmd FileType markdown let b:coc_suggest_disable = 1
+  autocmd FileType go let b:coc_pairs_disabled = ['<']
   autocmd FileType make,Makefile setl sw=4 sts=4 ts=4 noet
   autocmd FileType c,cpp setl sw=4 sts=4 ts=4 noet
   autocmd FileType yml,yaml setl sw=2 sts=2 ts=2 et indentkeys-=<:>
@@ -441,7 +444,7 @@ augroup mygroup
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
   autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+  autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
   autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
   autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
