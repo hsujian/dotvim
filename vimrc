@@ -65,10 +65,6 @@ let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 Plug 'fatih/vim-go'
 
-let g:fzf_buffers_jump = 1
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-
 call plug#end()
 
 filetype plugin indent on
@@ -324,67 +320,6 @@ vmap <C-c> "+y
 " 映射切换buffer的键位
 nnoremap [b :bp<CR>
 nnoremap ]b :bn<CR>
-
-" ----------------------------------------------------------------------------
-" fzf
-" ----------------------------------------------------------------------------
-nnoremap <silent> <C-p> :FZF -m<CR>
-let g:rg_command = 'rg --column --line-number --no-heading --color=always --smart-case '
-nnoremap <silent> <Leader>fg :call fzf#vim#grep(g:rg_command . shellescape(expand("<cword>")), 1)<CR>
-
-"nmap <leader><tab> <plug>(fzf-maps-n)
-"xmap <leader><tab> <plug>(fzf-maps-x)
-"omap <leader><tab> <plug>(fzf-maps-o)
-
-function! s:buflist()
-  redir => ls
-  silent ls
-  redir END
-  return split(ls, '\n')
-endfunction
-
-function! s:bufopen(e)
-  execute 'buffer' matchstr(a:e, '^[ 0-9]*')
-endfunction
-
-nnoremap <silent> <Leader><Enter> :call fzf#run({
-\   'source':  reverse(<sid>buflist()),
-\   'sink':    function('<sid>bufopen'),
-\   'options': '+m',
-\   'down':    len(<sid>buflist()) + 2
-\ })<CR>
-
-function! s:line_handler(l)
-  let keys = split(a:l, ':\t')
-  exec 'buf' keys[0]
-  exec keys[1]
-  normal! ^zz
-endfunction
-
-function! s:buffer_lines()
-  let res = []
-  for b in filter(range(1, bufnr('$')), 'buflisted(v:val)')
-    call extend(res, map(getbufline(b,0,"$"), 'b . ":\t" . (v:key + 1) . ":\t" . v:val '))
-  endfor
-  return res
-endfunction
-
-command! FZFLines call fzf#run({
-\   'source':  <sid>buffer_lines(),
-\   'sink':    function('<sid>line_handler'),
-\   'options': '--extended --nth=3..',
-\   'down':    '60%'
-\})
-
-" Open files in horizontal split
-nnoremap <silent> <Leader>s :call fzf#run({
-\   'down': '40%',
-\   'sink': 'botright split' })<CR>
-
-" Open files in vertical horizontal split
-nnoremap <silent> <Leader>v :call fzf#run({
-\   'right': winwidth('.') / 2,
-\   'sink':  'vertical botright split' })<CR>
 
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
