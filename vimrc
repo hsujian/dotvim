@@ -12,14 +12,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-sensible'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-let NERDTreeChDirMode=2
-let g:nerdtree_tabs_open_on_console_startup=1
-let NERDTreeIgnore=['\.pyc','\~$','\.swp']
-let NERDTreeShowBookmarks=1
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeToggle' }
-Plug 'jistr/vim-nerdtree-tabs', { 'on': 'NERDTreeToggle' }
-
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 
@@ -314,14 +306,10 @@ vnoremap <expr> <End> (col('.') == match(getline('.'), '\s*$') ? '$h' : 'g_')
 imap <Home> <C-o><Home>
 imap <End> <C-o><End>
 
-nnoremap <leader><tab> :NERDTreeToggle <c-r>=GetProjectDir()<cr><cr>
-
 vmap <C-c> "+y
 " 映射切换buffer的键位
 nnoremap [b :bp<CR>
 nnoremap ]b :bn<CR>
-
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
 
@@ -464,3 +452,9 @@ function! s:check_back_space() abort
 endfunction
 
 let g:coc_snippet_next = '<tab>'
+
+let g:netrw_banner=0
+let g:netrw_liststyle = 3
+let g:netrw_winsize = 25
+let g:netrw_list_hide = &wildignore
+autocmd FileType netrw set nolist
