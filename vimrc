@@ -27,6 +27,9 @@ Plug 'airblade/vim-rooter'
 
 Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
+
 Plug 'honza/vim-snippets'
 
 let g:gitgutter_realtime = 0
@@ -47,7 +50,6 @@ Plug 'tpope/vim-markdown'
 let vim_markdown_preview_hotkey='<C-m>'
 let vim_markdown_preview_browser='Google Chrome'
 Plug 'JamshedVesuna/vim-markdown-preview'
-Plug 'othree/yajs.vim'
 
 let g:go_fmt_command = "goimports"
 let g:go_highlight_functions = 1
@@ -55,7 +57,7 @@ let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
-Plug 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 call plug#end()
 
@@ -227,38 +229,6 @@ command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 
 set wildchar=<Tab> wildmenu wildmode=full
 set wildcharm=<C-Z>
-
-" tab or buf switch
-let g:previous_tab = 1
-function! My_buf_switch()
-  if bufnr('$') == 2
-    b#
-  elseif bufnr('$') > 2
-    if exists('g:loaded_denite')
-      denite -start-insert buffer bookmark
-    else
-      buffers
-      let select_buf_nr = input("Enter buffer number: ")
-      if(strlen(select_buf_nr) != 0)
-        exe ":buffer ". select_buf_nr
-      endif
-    endif
-  endif
-endfunction
-
-function! My_tb_switch()
-  if tabpagenr('$') > 1
-    exe "tabn" g:previous_tab
-  else
-    call My_buf_switch()
-  endif
-endfunction
-autocmd TabLeave * let g:previous_tab = tabpagenr()
-noremap <silent><F2> :call My_tb_switch()<CR>
-imap <F2> <C-o><F2>
-noremap <silent><F1> :bp<CR>
-imap <F1> <C-o><F1>
-" switch end
 
 autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd User fugitive
@@ -458,3 +428,29 @@ let g:netrw_liststyle = 3
 let g:netrw_winsize = 25
 let g:netrw_list_hide = &wildignore
 autocmd FileType netrw set nolist
+
+let g:gutentags_project_root = ['.git', '.idea', '.svn', '.hg', 'Makefile', '.root']
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+pxI']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+let g:gutentags_auto_add_gtags_cscope = 0
+
+let g:Lf_RootMarkers = ['.git', '.idea', '.svn', '.hg', 'Makefile', '.root']
+let g:Lf_ShortcutF = '<C-P>'
+"let g:Lf_HideHelp = 1
+let g:Lf_IgnoreCurrentBufferName = 1
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0 }
+
+noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
+noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
+
+let g:Lf_GtagsAutoGenerate = 1
+let g:Lf_Gtagslabel = 'native-pygments'
+noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>fd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>fo :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
+noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
+noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
