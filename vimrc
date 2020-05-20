@@ -257,6 +257,7 @@ set colorcolumn=+1
 
 if executable('rg')
   set grepprg=rg\ -S\ --vimgrep
+  set grepformat^=%f:%l:%c:%m
 endif
 
 " Vim. Live it. ------------------------------------------------------- {{{
@@ -432,7 +433,7 @@ autocmd FileType netrw set nolist
 let g:gutentags_generate_on_missing = 1
 let g:gutentags_generate_on_write = 1
 let g:gutentags_generate_on_empty_buffer = 0
-let g:gutentags_project_root = ['.git', '.idea', '.svn', '.hg', 'Makefile', '.root']
+let g:gutentags_project_root = ['.idea', '.root']
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+pxI']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
@@ -440,7 +441,7 @@ let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
 let g:gutentags_auto_add_gtags_cscope = 0
 let g:gutentags_plus_switch = 1
 
-let g:Lf_RootMarkers = ['.git', '.idea', '.svn', '.hg', 'Makefile', '.root']
+"let g:Lf_RootMarkers = ['.git', '.idea', '.svn', '.hg', '.root']
 let g:Lf_ShortcutF = '<C-P>'
 let g:Lf_IgnoreCurrentBufferName = 1
 let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0 }
@@ -468,3 +469,9 @@ highlight Lf_hl_match gui=bold guifg=Blue cterm=bold ctermfg=21
 highlight Lf_hl_matchRefine  gui=bold guifg=Magenta cterm=bold ctermfg=201
 
 nnoremap <leader><Esc> :sp $MYVIMRC<CR>
+
+augroup autoquickfix
+  autocmd!
+  autocmd QuickFixCmdPost [^l]* cwindow
+  autocmd QuickFixCmdPost    l* lwindow
+augroup END
