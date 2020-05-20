@@ -52,4 +52,5 @@ if has("gui_macvim")
   no <D-S-Right> :tabm +1<cr>
   imap <D-S-Left> <C-o><D-S-Left>
   imap <D-S-Right> <C-o><D-S-Right>
+  macmenu File.Print key=<nop>
 endif

@@ -28,6 +28,7 @@ Plug 'airblade/vim-rooter'
 Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' }
 
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'skywind3000/gutentags_plus'
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 
 Plug 'honza/vim-snippets'
@@ -213,7 +214,6 @@ if has("autocmd")
   autocmd FileType yml,yaml setl sw=2 sts=2 ts=2 et indentkeys-=<:>
   autocmd filetype svn,*commit* setl spell
   autocmd BufReadPost * call SetCursorPosition()
-  autocmd BufReadPost post-receive setl ft=sh
 
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
   augroup END
@@ -320,7 +320,7 @@ function! s:show_documentation()
 endfunction
 
 " Highlight symbol under cursor on CursorHold
-"autocmd CursorHold * silent call CocActionAsync('highlight')
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Remap for rename current word
 nmap <leader>rn <Plug>(coc-rename)
@@ -429,16 +429,19 @@ let g:netrw_winsize = 25
 let g:netrw_list_hide = &wildignore
 autocmd FileType netrw set nolist
 
+let g:gutentags_generate_on_missing = 1
+let g:gutentags_generate_on_write = 1
+let g:gutentags_generate_on_empty_buffer = 0
 let g:gutentags_project_root = ['.git', '.idea', '.svn', '.hg', 'Makefile', '.root']
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+pxI']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
 let g:gutentags_auto_add_gtags_cscope = 0
+let g:gutentags_plus_switch = 1
 
 let g:Lf_RootMarkers = ['.git', '.idea', '.svn', '.hg', 'Makefile', '.root']
 let g:Lf_ShortcutF = '<C-P>'
-"let g:Lf_HideHelp = 1
 let g:Lf_IgnoreCurrentBufferName = 1
 let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0 }
 
@@ -447,10 +450,21 @@ noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
 noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
 noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
 
-let g:Lf_GtagsAutoGenerate = 1
-let g:Lf_Gtagslabel = 'native-pygments'
+noremap <leader>ff :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+xnoremap ff :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
+noremap go :<C-U>Leaderf! rg --recall<CR>
+
+let g:Lf_GtagsAutoGenerate = 0
+let g:Lf_GtagsSkipUnreadable = 1
+let g:Lf_ShowDevIcons = 0
+"let g:Lf_Gtagslabel = 'native-pygments'
 noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
 noremap <leader>fd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
 noremap <leader>fo :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
 noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
 noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
+
+highlight Lf_hl_match gui=bold guifg=Blue cterm=bold ctermfg=21
+highlight Lf_hl_matchRefine  gui=bold guifg=Magenta cterm=bold ctermfg=201
+
+nnoremap <leader><Esc> :sp $MYVIMRC<CR>
