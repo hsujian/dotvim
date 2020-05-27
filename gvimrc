@@ -18,7 +18,6 @@ augroup END
 au FocusGained * set guitablabel=%M%N\ %t
 
 if has("gui_macvim")
-  let g:airline#extensions#tabline#enabled = 0
   "set guifont=Monaco:h16
   set guifont=Cascadia\ Code\ PL:h16
   nnoremap <D-1> 1gt
@@ -53,4 +52,5 @@ if has("gui_macvim")
   imap <D-S-Left> <C-o><D-S-Left>
   imap <D-S-Right> <C-o><D-S-Right>
   macmenu File.Print key=<nop>
+  nnoremap <D-p> :Files<cr>
 endif

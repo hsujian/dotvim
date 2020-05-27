@@ -29,23 +29,17 @@ Plug 'nsf/gocode', { 'rtp': 'vim', 'do': '~/.vim/plugged/gocode/vim/symlink.sh' 
 
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'skywind3000/gutentags_plus'
+
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
+
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
 
 Plug 'honza/vim-snippets'
 
 let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
 Plug 'airblade/vim-gitgutter'
-let g:airline_powerline_fonts = 1
-let g:airline_theme="dark"
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-let g:airline#extensions#tabline#left_sep = ' '   "tabline中未激活buffer两端的分隔字符
-let g:airline#extensions#tabline#left_alt_sep = '|'      "tabline中buffer显示编号
-let g:airline#extensions#tabline#buffer_nr_show = 1
-
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 
 Plug 'tpope/vim-markdown'
 let vim_markdown_preview_hotkey='<C-m>'
@@ -60,6 +54,7 @@ let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
+Plug 'dart-lang/dart-vim-plugin'
 call plug#end()
 
 filetype plugin indent on
@@ -108,8 +103,7 @@ set path+=**
 set wildmode=list:longest,full
 set wildignore=*.o,*.obj,*~
 set wildignore+=*DS_Store*
-set wildignore+=vendor/rails/**
-set wildignore+=vendor/cache/**
+set wildignore+=vendor/**
 set wildignore+=*.gem
 set wildignore+=log/**
 set wildignore+=tmp/**
@@ -148,26 +142,6 @@ else
   map <C-k> <C-w>k
   map <C-l> <C-w>l
 endif
-
-function! GetProjectDir(...)
-  let dn = expand('%:p:h') . '/'
-  let idx = matchend(dn, "/node_modules/[^/]*/")
-  if idx > 0
-    return dn[:idx-1]
-  endif
-
-  if exists('b:git_dir')
-    let temp = fnamemodify(b:git_dir, ":s?/\.git.*??")
-    if isdirectory(temp)
-      return temp
-    endif
-  endif
-
-  if empty(a:000)
-    return getcwd()
-  endif
-  return a:1
-endf
 
 "visual search mappings
 function! s:VSetSearch()
@@ -286,8 +260,6 @@ nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
 
 " don't give |ins-completion-menu| messages.
 set shortmess+=c
-
-" always show signcolumns
 set signcolumn=yes
 
 " Use <c-space> to trigger completion.
@@ -327,11 +299,10 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
 
 " Remap for format selected region
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+"xmap <leader>f  <Plug>(coc-format-selected)
 
 augroup mygroup
-  autocmd!
+    autocmd!
   " Setup formatexpr specified filetype(s).
   autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
   " Update signature help on jump placeholder
@@ -373,8 +344,10 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 " use `:OR` for organize import of current buffer
 command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
 
+set statusline=[%n]\ %<%.99f\ %h%w%m%r%{exists('*CapsLockStatusline')?CapsLockStatusline():''}%y%=%-16(\ %l,%c-%v\ %)%P
+
 " Add status line support, for integration with other plugin, checkout `:h coc-status`
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+set statusline+=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Using CocList
 " Show all diagnostics
@@ -433,7 +406,7 @@ autocmd FileType netrw set nolist
 let g:gutentags_generate_on_missing = 1
 let g:gutentags_generate_on_write = 1
 let g:gutentags_generate_on_empty_buffer = 0
-let g:gutentags_project_root = ['.idea', '.root']
+let g:gutentags_project_root = ['.idea', '.root', 'go.mod']
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+pxI']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
@@ -441,19 +414,13 @@ let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
 let g:gutentags_auto_add_gtags_cscope = 0
 let g:gutentags_plus_switch = 1
 
-"let g:Lf_RootMarkers = ['.git', '.idea', '.svn', '.hg', '.root']
-let g:Lf_ShortcutF = '<C-P>'
+let g:Lf_RootMarkers = ['.git', '.idea', '.svn', '.hg', '.root', 'go.mod']
 let g:Lf_IgnoreCurrentBufferName = 1
-let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0 }
 
 noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
 noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
 noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
 noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
-
-noremap <leader>ff :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
-xnoremap ff :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
-noremap go :<C-U>Leaderf! rg --recall<CR>
 
 let g:Lf_GtagsAutoGenerate = 0
 let g:Lf_GtagsSkipUnreadable = 1
@@ -465,13 +432,39 @@ noremap <leader>fo :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
 noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
 noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
 
-highlight Lf_hl_match gui=bold guifg=Blue cterm=bold ctermfg=21
-highlight Lf_hl_matchRefine  gui=bold guifg=Magenta cterm=bold ctermfg=201
-
-nnoremap <leader><Esc> :sp $MYVIMRC<CR>
+nnoremap <leader><Esc> :vs $MYVIMRC<CR>
 
 augroup autoquickfix
   autocmd!
   autocmd QuickFixCmdPost [^l]* cwindow
   autocmd QuickFixCmdPost    l* lwindow
 augroup END
+
+let g:fzf_buffers_jump = 1
+let $FZF_DEFAULT_COMMAND= 'fd --exclude="*.png" --exclude="*.jpg" --exclude="*.gif" --type f'
+
+" return the visually selected text and quote it with double quote
+function! GetVisual() abort
+    try
+        let x_save = @x
+        norm! gv"xy
+        return '"' . escape(@x, '"') . '"'
+    finally
+        let @x = x_save
+    endtry
+endfunction
+function! GetRawVisual() abort
+    try
+        let x_save = @x
+        norm! gv"xy
+        return @x
+    finally
+        let @x = x_save
+    endtry
+endfunction
+
+nnoremap <C-p> :call fzf#vim#files('.', {'options':'--no-preview'})<CR>
+nnoremap <leader>g :call fzf#vim#files('.', {'options':'--no-preview --query '.expand('<cword>')})<CR>
+xnoremap <leader>g :<C-U>call fzf#vim#files('.', {'options':'--no-preview --query '.GetVisual()})<CR>
+nnoremap <silent> <Leader>ff :Rg <C-R><C-W><CR>
+xnoremap <leader>ff :<C-U>Rg <C-R>=GetRawVisual()<CR><CR>
