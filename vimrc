@@ -53,6 +53,7 @@ let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
+let g:dart_style_guide=1
 Plug 'dart-lang/dart-vim-plugin'
 call plug#end()
 
@@ -60,6 +61,7 @@ filetype plugin indent on
 syntax on
 " " }}}
 
+set omnifunc=syntaxcomplete#Complete
 set showmode
 set nu
 set hlsearch
@@ -70,8 +72,6 @@ set linebreak
 set mouse=a
 set hidden
 set pastetoggle=<F7>
-set completeopt=longest,menu
-"set completeopt-=preview
 set lazyredraw
 set si
 set encoding=utf-8
@@ -167,7 +167,7 @@ if has("autocmd")
   au InsertEnter * set imd imi=0
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
-  au FocusLost * silent! wa
+  "au FocusLost * silent! wa
 
   autocmd FileType markdown setl sw=4 sts=4 ts=4 noet nonu
   autocmd FileType markdown let b:coc_suggest_disable = 1
@@ -289,19 +289,10 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 " Remap for rename current word
 nmap <leader>rn <Plug>(coc-rename)
 
-augroup mygroup
-    autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-augroup end
+" Setup formatexpr specified filetype(s).
+autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+" Update signature help on jump placeholder
+autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
 " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
 xmap <leader>a  <Plug>(coc-codeaction-selected)
@@ -395,8 +386,6 @@ let g:netrw_winsize = 25
 let g:netrw_list_hide = &wildignore
 autocmd FileType netrw set nolist
 
-"let $GTAGSLABEL = 'native-pygments'
-"let $GTAGSCONF = $HOME . '/.globalrc'
 let g:gutentags_modules = ['ctags', 'gtags_cscope']
 let g:gutentags_project_root = ['.idea', '.root', 'go.mod']
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
