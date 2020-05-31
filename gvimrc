@@ -3,8 +3,6 @@
 
 set guioptions-=r
 set guioptions-=L
-set mouse=a
-set ttymouse=xterm2
 set switchbuf=usetab,newtab
 
 augroup gvimrcEx
@@ -53,4 +51,5 @@ if has("gui_macvim")
   imap <D-S-Right> <C-o><D-S-Right>
   macmenu File.Print key=<nop>
   nnoremap <D-p> :Files<cr>
+  inoremap <silent><expr> <D-space> coc#refresh()
 endif
