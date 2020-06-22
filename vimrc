@@ -10,6 +10,7 @@ set nocompatible
 call plug#begin('~/.vim/plugged')
 
 Plug 'tpope/vim-sensible'
+Plug 'jiangmiao/auto-pairs'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'tpope/vim-fugitive'
@@ -17,6 +18,7 @@ Plug 'tpope/vim-surround'
 
 Plug 'scrooloose/nerdcommenter'
 
+let g:solarized_hitrail=1
 Plug 'altercation/vim-colors-solarized'
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 Plug 'editorconfig/editorconfig-vim'
@@ -40,7 +42,6 @@ let g:gitgutter_realtime = 0
 let g:gitgutter_eager = 0
 Plug 'airblade/vim-gitgutter'
 
-Plug 'tpope/vim-markdown'
 let vim_markdown_preview_hotkey='<C-m>'
 let vim_markdown_preview_browser='Google Chrome'
 Plug 'JamshedVesuna/vim-markdown-preview'
@@ -62,12 +63,18 @@ syntax on
 " " }}}
 
 set omnifunc=syntaxcomplete#Complete
-set showmode
+set sw=4 sts=4 ts=4
+set winwidth=90
+set tw=78
+set colorcolumn=+1
 set nu
 set hlsearch
+set smartcase
 set ignorecase
-set wrap
-set linebreak
+set showmode
+set iminsert=0
+set imsearch=-1
+set imd
 
 set mouse=a
 set hidden
@@ -79,61 +86,19 @@ set fenc=utf-8
 set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936,big5,euc-jp,latin1
 syntax sync minlines=256
 set cmdheight=2
-"set list
-map <silent> <C-F11> :set invlist<CR>
 set mat=2
 "set splitright
 "set splitbelow
 set updatetime=300
 set signcolumn=yes
-nnoremap <F3> :cn<cr>
-nnoremap <S-F3> :cp<cr>
 
 set autowriteall
 set path+=**
 set wildmode=list:longest,full
-set wildignore=*.o,*.obj,*~
+set wildignore=*.o,*.obj,*.so
 set wildignore+=*DS_Store*
-set wildignore+=vendor/**
-set wildignore+=*.gem
-set wildignore+=log/**
-set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
-set wildignore+=*.so,*.swp,*.zip,*/.Trash/**,*.pdf,*.dmg
-
-if exists('$TMUX')
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-else
-  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-endif
-
-if exists('$TMUX')
-  set ttymouse=xterm2
-  function! TmuxOrSplitSwitch(wincmd, tmuxdir)
-    let previous_winnr = winnr()
-    silent! execute "wincmd " . a:wincmd
-    if previous_winnr == winnr()
-      call system("tmux select-pane -" . a:tmuxdir)
-      redraw!
-    endif
-  endfunction
-
-  let previous_title = substitute(system("tmux display-message -p '#{pane_title}'"), '\n', '', '')
-  let &t_ti = "\<Esc>]2;vim\<Esc>\\" . &t_ti
-  let &t_te = "\<Esc>]2;". previous_title . "\<Esc>\\" . &t_te
-
-  nnoremap <silent> <C-h> :call TmuxOrSplitSwitch('h', 'L')<cr>
-  nnoremap <silent> <C-j> :call TmuxOrSplitSwitch('j', 'D')<cr>
-  nnoremap <silent> <C-k> :call TmuxOrSplitSwitch('k', 'U')<cr>
-  nnoremap <silent> <C-l> :call TmuxOrSplitSwitch('l', 'R')<cr>
-else
-  map <C-h> <C-w>h
-  map <C-j> <C-w>j
-  map <C-k> <C-w>k
-  map <C-l> <C-w>l
-endif
+set wildignore+=*~,*.swp
 
 "visual search mappings
 function! s:VSetSearch()
@@ -148,14 +113,13 @@ vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR>
 "jump to last cursor position when opening a file
 "dont do it when writing a commit log entry
 function! SetCursorPosition()
-  if &filetype !~ 'svn\|commit\c'
+  if &filetype !~# 'commit'
     if line("'\"") > 0 && line("'\"") <= line("$")
       exe "normal! g`\""
       normal! zz
     endif
   end
 endfunction
-
 
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
@@ -167,15 +131,15 @@ if has("autocmd")
   au InsertEnter * set imd imi=0
 
   au FileChangedShell * Warn "File has been changed outside of Vim."
-  "au FocusLost * silent! wa
+  au FocusLost * silent! wa
 
-  autocmd FileType markdown setl sw=4 sts=4 ts=4 noet nonu
-  autocmd FileType markdown let b:coc_suggest_disable = 1
-  autocmd FileType go let b:coc_pairs_disabled = ['<']
-  autocmd FileType make,Makefile setl sw=4 sts=4 ts=4 noet
-  autocmd FileType c,cpp setl sw=4 sts=4 ts=4 noet
+  "autocmd FileType markdown setl sw=4 sts=4 ts=4 noet
+  "autocmd FileType make,Makefile setl sw=4 sts=4 ts=4 noet
+  "autocmd FileType c,cpp setl sw=4 sts=4 ts=4 noet
+
+  autocmd FileType txt let b:coc_suggest_disable = 1
+  autocmd FileType html,css,javascript setl sw=2 sts=2 ts=2 noet iskeyword+=-
   autocmd FileType yml,yaml setl sw=2 sts=2 ts=2 et indentkeys-=<:>
-  autocmd filetype svn,*commit* setl spell
   autocmd BufReadPost * call SetCursorPosition()
 
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
@@ -185,8 +149,10 @@ endif " has("autocmd")
 
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+if !exists(":DiffOrig")
+command! DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
   \ | wincmd p | diffthis
+endif
 
 set wildchar=<Tab> wildmenu wildmode=full
 set wildcharm=<C-Z>
@@ -198,27 +164,12 @@ autocmd User fugitive
   \ endif
 
 set undodir^=~/.vim/undo
+set backup
 set undofile
 nnoremap <leader>u :GundoToggle<cr>
 
 silent! colorscheme solarized
 "highlight clear SignColumn
-hi HighlightedyankRegion term=bold ctermbg=0 guibg=#13354A
-
-function! MyWS()
-  if !hlexists('ExtraWhitespace')
-    hi ExtraWhitespace ctermbg=red guibg=red
-  endif
-  match ExtraWhitespace /\s\+$/
-endfun
-au Syntax * if empty(&buftype) && &modifiable | call MyWS() | endif
-
-set iminsert=0
-set imsearch=-1
-set imd
-set winwidth=90
-set tw=78
-set colorcolumn=+1
 
 if executable('rg')
   set grepprg=rg\ -S\ --vimgrep
@@ -247,11 +198,85 @@ vmap <C-c> "+y
 nnoremap [b :bp<CR>
 nnoremap ]b :bn<CR>
 
-nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
-
 " don't give |ins-completion-menu| messages.
 set shortmess+=c
 set signcolumn=yes
+
+set statusline=%n\ %<%.99f\ %{(&paste==1)?'[PASTE]':''}%h%w%m%r\ %1*\ %=
+set statusline+=\ %y
+set statusline+=%{(&ff!='unix')?&ff:''.(&fenc!='utf-8'&&&fenc!='')?'\ '.&fenc:''.&bomb?'-bom':''}
+set statusline+=\ %*%-16(%l,%c-%v\ %P%)
+
+let g:netrw_banner=0
+let g:netrw_liststyle = 3
+let g:netrw_winsize = 25
+let g:netrw_list_hide = &wildignore
+nnoremap <leader><Tab> :Lexplore<CR>
+
+let g:gutentags_modules = ['ctags', 'gtags_cscope']
+let g:gutentags_project_root = ['tags']
+let g:gutentags_add_default_project_roots = 0
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+pxI']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+let g:gutentags_auto_add_gtags_cscope = 0
+let g:gutentags_plus_switch = 1
+
+nnoremap <leader><Esc> :e $MYVIMRC<CR>
+
+augroup autoquickfix
+  autocmd!
+  autocmd QuickFixCmdPost [^l]* cwindow
+  autocmd QuickFixCmdPost    l* lwindow
+augroup END
+
+let g:fzf_buffers_jump = 1
+let $FZF_DEFAULT_COMMAND= 'fd --exclude="*.png" --exclude="*.jpg" --exclude="*.gif" --type f'
+
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
+" return the visually selected text and quote it with double quote
+function! GetVisual() abort
+    try
+        let x_save = @x
+        norm! gv"xy
+        return '"' . escape(@x, '"') . '"'
+    finally
+        let @x = x_save
+    endtry
+endfunction
+function! GetRawVisual() abort
+    try
+        let x_save = @x
+        norm! gv"xy
+        return @x
+    finally
+        let @x = x_save
+    endtry
+endfunction
+
+nnoremap <C-p> :call fzf#vim#files('.', {'options':'--no-preview'})<CR>
+nnoremap <leader>g :call fzf#vim#files('.', {'options':'--no-preview -1 --query '.expand('<cword>')})<CR>
+"xnoremap <leader>g :<C-U>call fzf#vim#files('.', {'options':'--no-preview -1 --query '.GetVisual()})<CR>
+nnoremap <silent> <Leader>ff :RG <C-R><C-W><CR>
+"xnoremap <leader>ff :<C-U>RG <C-R>=GetRawVisual()<CR><CR>
+nnoremap <leader>b :Buffers<CR>
+
+nnoremap <C-]> g<C-]>
+
+autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+
+" coc {{{
+nnoremap <silent> <space>y  :<C-u>CocList -A --normal yank<cr>
 
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
@@ -259,8 +284,6 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" Or use `complete_info` if your vim support it, like:
-" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 
 " Use `[g` and `]g` to navigate diagnostics
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
@@ -313,24 +336,8 @@ omap af <Plug>(coc-funcobj-a)
 nmap <silent> <C-d> <Plug>(coc-range-select)
 xmap <silent> <C-d> <Plug>(coc-range-select)
 
-" Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
-
-" Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
 " use `:OR` for organize import of current buffer
 command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-set statusline=%n\ %<%.99f\ %h%w%m%r%1*\ %=
-set statusline+=%{gutentags#statusline()}
-set statusline+=%{coc#status()}%{get(b:,'coc_current_function','')}
-set statusline+=\ %y
-set statusline+=%{(&ff!='unix')?&ff:''.(&fenc!='utf-8'&&&fenc!='')?'\ '.&fenc:''.&bomb?'-bom':''}
-set statusline+=%*%-16(%l,%c-%v\ %P%)
-hi StatusLine cterm=reverse gui=reverse ctermfg=14 ctermbg=8 guifg=#93a1a1 guibg=#002732
-hi StatusLineNC cterm=reverse gui=reverse ctermfg=11 ctermbg=0 guifg=#657b83 guibg=#073642
-hi User1 ctermfg=14 ctermbg=0 guifg=#93a1a1 guibg=#073642
 
 " Using CocList
 " Show all diagnostics
@@ -350,100 +357,8 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
-"{{snippet}}
-" Use <C-l> for trigger snippet expand.
-imap <C-l> <Plug>(coc-snippets-expand)
-
-" Use <C-j> for select text for visual placeholder of snippet.
-vmap <C-j> <Plug>(coc-snippets-select)
-
-" Use <C-j> for jump to next placeholder, it's default of coc.nvim
-let g:coc_snippet_next = '<c-j>'
-
-" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
-let g:coc_snippet_prev = '<c-k>'
-
 " Use <C-j> for both expand and jump (make expand higher priority.)
 imap <C-j> <Plug>(coc-snippets-expand-jump)
 
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-let g:coc_snippet_next = '<tab>'
-
-let g:netrw_banner=0
-let g:netrw_liststyle = 3
-let g:netrw_winsize = 25
-let g:netrw_list_hide = &wildignore
-autocmd FileType netrw set nolist
-
-let g:gutentags_modules = ['ctags', 'gtags_cscope']
-let g:gutentags_project_root = ['.idea', '.root', 'go.mod']
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-let g:gutentags_ctags_extra_args += ['--c++-kinds=+pxI']
-let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-let g:gutentags_auto_add_gtags_cscope = 0
-let g:gutentags_plus_switch = 1
-
-nnoremap <leader><Esc> :e $MYVIMRC<CR>
-
-augroup autoquickfix
-  autocmd!
-  autocmd QuickFixCmdPost [^l]* cwindow
-  autocmd QuickFixCmdPost    l* lwindow
-augroup END
-
-let g:fzf_buffers_jump = 1
-let $FZF_DEFAULT_COMMAND= 'fd --exclude="*.png" --exclude="*.jpg" --exclude="*.gif" --type f'
-
-function! RipgrepFzf(query, fullscreen)
-  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
-  let initial_command = printf(command_fmt, shellescape(a:query))
-  let reload_command = printf(command_fmt, '{q}')
-  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
-endfunction
-
-command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
-
-" return the visually selected text and quote it with double quote
-function! GetVisual() abort
-    try
-        let x_save = @x
-        norm! gv"xy
-        return '"' . escape(@x, '"') . '"'
-    finally
-        let @x = x_save
-    endtry
-endfunction
-function! GetRawVisual() abort
-    try
-        let x_save = @x
-        norm! gv"xy
-        return @x
-    finally
-        let @x = x_save
-    endtry
-endfunction
-
-nnoremap <C-p> :call fzf#vim#files('.', {'options':'--no-preview'})<CR>
-nnoremap <leader>g :call fzf#vim#files('.', {'options':'--no-preview -1 --query '.expand('<cword>')})<CR>
-"xnoremap <leader>g :<C-U>call fzf#vim#files('.', {'options':'--no-preview -1 --query '.GetVisual()})<CR>
-nnoremap <silent> <Leader>fo :RG<CR>
-nnoremap <silent> <Leader>ff :RG <C-R><C-W><CR>
-"xnoremap <leader>ff :<C-U>RG <C-R>=GetRawVisual()<CR><CR>
-nnoremap <leader>b :Buffers<CR>
-
-nnoremap <C-]> g<C-]>
-
-autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
-autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+hi HighlightedyankRegion term=bold ctermbg=0 guibg=#13354A
+" }}}

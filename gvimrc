@@ -4,6 +4,7 @@
 set guioptions-=r
 set guioptions-=L
 set switchbuf=usetab,newtab
+set mousehide
 
 augroup gvimrcEx
   au!
@@ -13,7 +14,7 @@ augroup gvimrcEx
   endif
 augroup END
 
-au FocusGained * set guitablabel=%M%N\ %t
+au FocusGained * set guitablabel=%M%N\ %.50f
 
 if has("gui_macvim")
   "set guifont=Monaco:h16
@@ -53,3 +54,16 @@ if has("gui_macvim")
   nnoremap <D-p> :Files<cr>
   inoremap <silent><expr> <D-space> coc#refresh()
 endif
+
+func! s:ChangeBackground()
+  if (v:os_appearance)
+    set background=dark
+  else
+    set background=light
+  endif
+  redraw!
+endfunc
+
+"augroup AutoDark
+  "autocmd OSAppearanceChanged * call s:ChangeBackground()
+"augroup END
