@@ -55,15 +55,17 @@ if has("gui_macvim")
   inoremap <silent><expr> <D-space> coc#refresh()
 endif
 
-func! s:ChangeBackground()
-  if (v:os_appearance)
-    set background=dark
-  else
-    set background=light
-  endif
-  redraw!
-endfunc
+" autodark {{{
+"func! s:ChangeBackground()
+  "if (v:os_appearance)
+    "set background=dark
+  "else
+    "set background=light
+  "endif
+  "redraw!
+"endfunc
 
 "augroup AutoDark
   "autocmd OSAppearanceChanged * call s:ChangeBackground()
 "augroup END
+" }}}
