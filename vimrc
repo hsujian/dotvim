@@ -2,7 +2,7 @@
 " vim:set ts=2 sts=2 sw=2 expandtab:
 "
 set nocompatible
-let g:codelan = ['go', 'html', 'javascript', 'js', 'md', 'c', 'php', 'markdown']
+let g:codelan = ['go', 'rs', 'rust', 'cc','c','cpp','h', 'html', 'javascript', 'js', 'md', 'php', 'markdown']
 " Plugins " {{{
 call plug#begin('~/.vim/plugged')
 
@@ -22,7 +22,7 @@ Plug 'editorconfig/editorconfig-vim'
 
 let g:gundo_prefer_python3 = 1
 Plug 'sjl/gundo.vim'
-let g:rooter_patterns = ['.git', '.git/', 'go.mod', '_darcs/', '.hg/', '.bzr/', '.svn/', 'src/']
+let g:rooter_patterns = ['.git', '.git/', 'Cargo.toml', 'go.mod', '_darcs/', '.hg/', '.bzr/', '.svn/']
 Plug 'airblade/vim-rooter'
 
 Plug 'ludovicchabant/vim-gutentags', {'for': g:codelan }
@@ -48,20 +48,32 @@ let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
+let g:rustfmt_autosave = 1
+Plug 'rust-lang/rust.vim'
+
+Plug 'rhysd/vim-clang-format'
+
+Plug '~/.vim/leetcode'
+
 call plug#end()
 
 " " }}}
 
 set omnifunc=syntaxcomplete#Complete
-set sw=4 sts=4 ts=4
+
+set sw=2 sts=2 ts=2
+set expandtab
+set tw=80
+set wrap
+set cindent
+set cinoptions=h1,l1,g1,t0,i4,+4,(0,w1,W4
+
 set winwidth=90
-set tw=78
 set colorcolumn=+1
 set nu
 set hlsearch
 set smartcase
 set ignorecase
-set wrap
 set linebreak
 set showmode
 set iminsert=0
@@ -124,6 +136,7 @@ augroup vimrcEx
   autocmd FileType html,css,javascript setl sw=2 sts=2 ts=2 noet iskeyword+=-
   autocmd FileType yml,yaml setl sw=2 sts=2 ts=2 et indentkeys-=<:>
   autocmd BufReadPost * call SetCursorPosition()
+  autocmd FileType c,cpp,java ClangFormatAutoEnable
 
   au BufWritePost .vimrc,_vimrc,vimrc so $MYVIMRC
 augroup END
@@ -180,6 +193,18 @@ set statusline=%n\ %<%.99f\ %{(&paste==1)?'[PASTE]':''}%h%w%m%r\ %1*\ %=
 set statusline+=\ %y
 set statusline+=%{(&ff!='unix')?&ff:''.(&fenc!='utf-8'&&&fenc!='')?'\ '.&fenc:''.&bomb?'-bom':''}
 set statusline+=\ %*%-16(%l,%c-%v\ %P%)
+
+if has('macunix')
+  function! OpenURLUnderCursor()
+    let s:uri = matchstr(getline('.'), '[a-z]*:\/\/[^ >,;()]*')
+    let s:uri = shellescape(s:uri, 1)
+    if s:uri != ''
+      silent exec "!open '".s:uri."'"
+      :redraw!
+    endif
+  endfunction
+  nnoremap gx :call OpenURLUnderCursor()<CR>
+endif
 
 let g:netrw_banner=0
 let g:netrw_liststyle = 3
@@ -252,6 +277,18 @@ autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 imap <C-j> <Plug>(coc-snippets-expand-jump)
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 hi HighlightedyankRegion term=bold ctermbg=0 guibg=#13354A
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
 " }}}
 
 if has('mac') || has('macunix')
@@ -298,3 +335,5 @@ endfun
 autocmd BufRead,BufNewFile *.ctest setf quiz
 autocmd BufRead,BufNewFile *.quiz setf quiz
 autocmd FileType quiz call QuizInit()
+
+nnoremap <leader>l :call leetcode#menu()<CR>
